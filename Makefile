@@ -1,10 +1,11 @@
-CC = g++
+CC = c++
 SRCS = src/main.cpp
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
-FLAGS = -Wall -Wextra -Werror -std=c++98
-NAME = btc
-HEAD = 
+DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
+FLAGS = -Wall -Wextra -Werror -std=c++98 -MMD -MP
+NAME = ircserv
+HEAD =
 RM = rm -f
 
 GREEN = \033[0;32m
@@ -25,6 +26,8 @@ $(NAME): $(OBJS) ${HEAD}
 
 $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)
+
+-include $(DEPS)
 
 clean:
 	@$(RM) -r $(OBJS_DIR)
