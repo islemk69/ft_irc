@@ -49,3 +49,46 @@ TOPIC #nom_du_canal :Nouveau sujet du canal
 5) quitter un cannal : 
 QUIT :Raison de la déconnexion
 
+
+a partie :
+
+Création et Gestion des Sockets :
+
+-Utilisez la fonction socket pour créer un socket du côté serveur.
+-Utilisez bind pour lier le socket à une adresse et un port spécifiques.
+-Utilisez listen pour mettre le socket en mode écoute.
+
+Acceptation des Connexions Client :
+
+-Utilisez accept pour accepter les connexions entrantes des clients.
+-Gérez ces connexions dans une boucle pour permettre à plusieurs clients de se connecter.
+
+Gestion des Descripteurs de Fichiers (File Descriptors) Non Bloquants :
+
+-Configurez les sockets en mode non bloquant à l'aide de fcntl ou d'autres mécanismes appropriés.
+-Utilisez select, poll, ou tout autre équivalent pour gérer les opérations d'E/S non bloquantes.
+
+Réception et Envoi de Données :
+
+-Lorsque select signale qu'un descripteur de fichier est prêt à être lu, utilisez recv pour recevoir les données.
+-Utilisez send pour envoyer des données aux clients.
+-Assurez-vous de gérer les données de manière cohérente et conforme au protocole IRC.
+
+Traitement des Commandes IRC :
+
+-Une fois les données reçues, acheminez-les vers la partie de votre code qui gère la logique IRC (éventuellement la partie "Parsing").
+-Assurez-vous de traiter correctement les commandes IRC et de renvoyer les réponses appropriées.
+
+Gestion des Connexions Client :
+
+-Surveillez la déconnexion des clients et gérez proprement la fermeture des connexions.
+-Assurez-vous que votre serveur peut gérer simultanément plusieurs clients sans bloquer.
+
+Tests et Débogage :
+
+-Effectuez des tests approfondis pour vous assurer que votre serveur fonctionne correctement dans des scénarios variés.
+-Utilisez des outils de débogage et des journaux pour identifier et corriger les problèmes.
+
+Sécurité :
+
+Assurez-vous de traiter correctement la sécurité, notamment en évitant les vulnérabilités telles que les débordements de tampons.
