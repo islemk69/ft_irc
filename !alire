@@ -1,0 +1,77 @@
+ETAPES :
+
+Création et Gestion des Sockets :
+
+-Utilisez la fonction socket pour créer un socket du côté serveur.
+-Utilisez bind pour lier le socket à une adresse et un port spécifiques.
+-Utilisez listen pour mettre le socket en mode écoute.
+
+Acceptation des Connexions Client :
+
+-Utilisez accept pour accepter les connexions entrantes des clients.
+-Gérez ces connexions dans une boucle pour permettre à plusieurs clients de se connecter.
+
+Gestion des Descripteurs de Fichiers (File Descriptors) Non Bloquants :
+
+-Configurez les sockets en mode non bloquant à l'aide de fcntl ou d'autres mécanismes appropriés.
+-Utilisez select, poll, ou tout autre équivalent pour gérer les opérations d'E/S non bloquantes.
+
+Réception et Envoi de Données :
+
+-Lorsque select signale qu'un descripteur de fichier est prêt à être lu, utilisez recv pour recevoir les données.
+-Utilisez send pour envoyer des données aux clients.
+-Assurez-vous de gérer les données de manière cohérente et conforme au protocole IRC.
+
+Traitement des Commandes IRC :
+
+-Une fois les données reçues, acheminez-les vers la partie de votre code qui gère la logique IRC (éventuellement la partie "Parsing").
+-Assurez-vous de traiter correctement les commandes IRC et de renvoyer les réponses appropriées.
+
+Gestion des Connexions Client :
+
+-Surveillez la déconnexion des clients et gérez proprement la fermeture des connexions.
+-Assurez-vous que votre serveur peut gérer simultanément plusieurs clients sans bloquer.
+
+Tests et Débogage :
+
+-Effectuez des tests approfondis pour vous assurer que votre serveur fonctionne correctement dans des scénarios variés.
+-Utilisez des outils de débogage et des journaux pour identifier et corriger les problèmes.
+
+Sécurité :
+
+Assurez-vous de traiter correctement la sécurité, notamment en évitant les vulnérabilités telles que les débordements de tampons.
+
+
+LEXIQUE : 
+
+Socket : Un point de terminaison pour envoyer ou recevoir des données sur un réseau. Il peut être utilisé pour établir une connexion entre deux programmes, généralement sur des machines différentes.
+
+Adresse IP : Une adresse numérique unique attribuée à chaque périphérique connecté à un réseau utilisant le protocole Internet pour la communication. Il existe des adresses IPv4 (ex. 192.168.1.1) et IPv6 (ex. 2001:0db8:85a3:0000:0000:8a2e:0370:7334).
+
+Port : Un numéro de 16 bits utilisé pour identifier un processus spécifique à une machine. Il permet au système d'exploitation de diriger les données vers le bon programme en utilisant l'adresse IP et le numéro de port.
+
+Protocole TCP/IP : Protocole de communication utilisé sur Internet. Il se compose de deux parties principales : le protocole de contrôle de transmission (TCP) qui gère la communication fiable et orientée connexion, et le protocole Internet (IP) qui gère le routage des données entre les ordinateurs.
+
+Socket API (Application Programming Interface) : Un ensemble de fonctions et d'interfaces qui permettent à un programme d'accéder aux fonctionnalités de communication réseau. En C/C++, cela inclut généralement les fonctions comme socket(), bind(), listen(), accept(), connect(), send(), et recv().
+
+Binding (Liaison) : L'acte d'associer une adresse IP et un numéro de port à un socket.
+
+Listen (Écoute) : L'état d'un socket qui attend les connexions entrantes. Utilisé côté serveur.
+
+Connect (Connexion) : L'état d'un socket qui tente d'établir une connexion avec un autre socket distant. Utilisé côté client.
+
+Accept (Accepter) : L'action d'un socket serveur acceptant une connexion entrante, créant un nouveau socket pour cette connexion.
+
+Non-blocking (Non bloquant) : Lorsqu'un socket est configuré pour des opérations d'E/S qui ne bloquent pas l'exécution du programme en attendant que l'opération soit terminée.
+
+Polling (Poll) : Un mécanisme où le programme vérifie périodiquement l'état des sockets pour déterminer s'ils sont prêts à être lus ou écrits.
+
+Firewall (pare-feu) : Un dispositif ou un logiciel qui filtre et contrôle le trafic réseau entrant et sortant basé sur un ensemble de règles de sécurité.
+
+Protocole UDP (User Datagram Protocol) : Un protocole de couche transport qui offre une communication sans connexion et non fiable.
+
+Protocole ICMP (Internet Control Message Protocol) : Utilisé pour envoyer des messages d'erreur et de contrôle liés au réseau.
+
+DHCP (Dynamic Host Configuration Protocol) : Protocole réseau utilisé pour attribuer dynamiquement des adresses IP et d'autres informations de configuration à des périphériques sur un réseau.
+
+Ces termes sont fondamentaux pour comprendre et mettre en œuvre des applications réseau, en particulier lors de la programmation de serveurs IRC. Si vous avez des questions plus spécifiques sur l'un de ces termes ou d'autres concepts, n'hésitez pas à demander.
