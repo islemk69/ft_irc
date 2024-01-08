@@ -25,6 +25,7 @@ class Server{
         unsigned int _port;
         std::string _password;
         std::vector<pollfd> _fds;
+
         int _serverSocket;
     public:
         Server(Server &cpy);
