@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <vector>
+#include <poll.h>
 
 # define PORT 6667
 
