@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:19:04 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/05 18:46:38 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:00:52 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,17 @@
 # define ERR_TOOMANYCHANNELS(nick, channel) (":" + SERVER_NAME + " 405 " \
 	+ nick + " " + channel + " :You have joined too many channels\r\n")
 
+# define ERR_TOOMANYTARGETS(nick) ((":" + SERVER_NAME + " 407 " \
+	+ nick + " :Too many targets for private message\r\n"))
+
 # define ERR_NORECIPIENT(nick, command) (":" + SERVER_NAME + " 411 " \
 	+ nick + " :No recipient given (<" + command + ">)\r\n")
 
 # define ERR_NOTEXTTOSEND(nick) ((":" + SERVER_NAME + " 412 " \
 	+ nick + " :No text to send\r\n"))
+
+# define ERR_UNKNOWNCOMMAND(nick, command) ((":" + SERVER_NAME + " 421 " \
+	+ nick + " " + command + " :Unknown command\r\n"))
 
 # define ERR_NONICKNAMEGIVEN(nick) (":" + SERVER_NAME + " 431 " \
 	+ nick + " :No nickname given\r\n")
