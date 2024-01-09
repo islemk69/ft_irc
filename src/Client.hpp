@@ -1,14 +1,22 @@
-// #include "Client.cpp"
+#ifndef CLIENT_HPP
+# define CLIENT_HPP
 
-// class Ok {
-//     private:
-//         int         _clientfd;
-//     public:
-//         bool		hasPassword;
-//         std::string nickName;
-//         std::string userName;
-//         std::string realName;
-//         std::string previousNickname;
-//         std::string socketBuffer;
-//         std::string awayMessage;
-// };
+#include "Server.hpp"
+
+class Client {
+    private:
+        int         _clientFd;
+    public:
+        Client(int clientFd);
+        ~Client();
+        bool		hasPassword;
+        std::string nickName;
+        std::string userName;
+        std::string realName;
+        std::string previousNickname;
+        std::string socketBuffer;
+        std::string awayMessage;
+        int getClientFd();
+};
+
+#endif

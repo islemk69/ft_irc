@@ -11,7 +11,9 @@
 #include <unistd.h>
 #include <vector>
 #include <poll.h>
+#include <map>
 #include "Client.hpp"
+
 
 # define PORT 6667
 
@@ -20,18 +22,20 @@
 #define RED "\033[1;31m"
 #define DEFAULT "\033[0m"
 
+class Client;
+
 class Server{
     private:
         unsigned int _port;
         std::string _password;
         std::vector<pollfd> _fds;
-
         int _serverSocket;
+        std::map<int, Client*> _clients;
     public:
         Server(Server &cpy);
         Server(std::string port, std::string password);
-        int initServer();
-        int launchServer();
+        void initServer();
+        void launchServer();
         int getServerSocket();
         ~Server();
 };

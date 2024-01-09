@@ -1,11 +1,11 @@
 CC = c++
-SRCS = src/main.cpp src/Server.cpp
+SRCS = src/main.cpp src/Server.cpp src/Client.cpp
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
 FLAGS =  -std=c++98 -MMD -MP
 NAME = ircserv
-HEAD = src/Server.hpp
+HEAD = src/Server.hpp src/Client.hpp
 RM = rm -f
 
 GREEN = \033[0;32m

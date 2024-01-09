@@ -17,15 +17,14 @@ void printLoadingAnimation() {
 
 
 int main(int argc, char **argv) {
-    if (argc < 2 || argc > 3)
+    if (argc != 3)
         return (std::cerr << RED << "Usage: ./ircserv <port> <password>" << DEFAULT << std::endl, 1);
-    std::string password;
+    std::string password = argv[2];
     std::string port = argv[1];
-    if (argc == 3)
-        password = argv[2];
+    std::cout << port << std::endl;
     Server server(port, password);
     try {
-        std::cout << YELLOW << "Launching irc server...." << std::endl;
+        std::cout << YELLOW << "Launching irc server...." << DEFAULT << std::endl;
         server.initServer();
         printLoadingAnimation();
         std::cout << GREEN << "IRC server Launched" << DEFAULT << std::endl;
