@@ -44,7 +44,7 @@ void Server::initServer(){
 
 int iter = 0; //DEBUG
 
-void Server::launchServer(){
+void Server::execServer(){
     if (poll(&this->_fds[0], this->_fds.size(), -1) == -1) { 
         throw std::runtime_error("Error in poll");
     } // a chaquees debut de boucle je check si un nouvel evenement est detecté sur le socket serveur ET les sockets clients le 3 eme parametre represente le temps en ms -1 = infini

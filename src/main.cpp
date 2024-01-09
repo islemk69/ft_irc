@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
         printLoadingAnimation();
         std::cout << GREEN << "IRC server Launched" << DEFAULT << std::endl;
         while (true) {
-            server.launchServer();
+            server.execServer();
         }
     } catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;

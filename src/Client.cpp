@@ -8,4 +8,6 @@ int Client::getClientFd() {
     return this->_clientFd;
 }
 
-Client::~Client(){}
+Client::~Client(){
+    
+}
