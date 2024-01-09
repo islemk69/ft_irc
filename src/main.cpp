@@ -1,16 +1,29 @@
 #include <iostream>
 #include "server.hpp"
+#include <cstdlib>
 
-
-int main(){
-    std::cout << "yo" << std::endl;
+int main(int ac, char **av) {
+    if (ac != 3) {
+        std::cout << "Usage: " << av[0] << " [ip] [port]" << std::endl;
+        return (1);
+    }
+    int port;
+    std::string password;
+    try {
+        port = atoi(av[1]);
+        password = av[2];
+        std::cout << "Server creration on port : " << port << std::endl;
+    } catch (std::exception &e) {
+        std::cout << "Error : " << e.what() << std::endl;
+        return (1);
+    }
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0); //création du socket AF_INET = ipv4 SOCK_STREAM = TCP
     if (serverSocket == -1)
         return (perror("Error while creating socket\n"), 1);
     sockaddr_in serverAddress; //creation adresse ipv4
     serverAddress.sin_family = AF_INET; //configuration adresse en ipv4;
     serverAddress.sin_addr.s_addr = INADDR_ANY;  // Accepter les connexions de n'importe quelle adresse
-    serverAddress.sin_port = htons(PORT);       // Le numéro de port que vous avez spécifié lors du lancement du serveur
+    serverAddress.sin_port = htons(port);       // Le numéro de port que vous avez spécifié lors du lancement du serveur
     if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) // lier le socket a ladresse ipv4 cree
         return(perror("Error when biding socket"), 1);
     listen(serverSocket, 20);  // BACKLOG est la taille maximale de la file d'attente de connexions en attente
