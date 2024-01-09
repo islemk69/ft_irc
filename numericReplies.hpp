@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:19:04 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/08 15:00:52 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/09 14:32:44 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,21 @@
 
 # define SERVER_NAME FT_IRC
 
-// ---- RPL_* ----
+// ---- CUSTOM RPL_* ----
+
+# define RPL_CMD(nick, user, cmd, reply) (":" + nick + "!" + user + "@localhost" + " " \
+	+ cmd + " " + reply + "\r\n")
+
+# define RPL_INVITE(nick, user, target, channel) (":" + nick + "!" + user + "@localhost" \
+	+ " INVITE " + target + " " + channel + "\r\n")
+
+# define RPL_NICK(previousNick, newNick, user) (":" + previousNick + "!" + user + "@localhost" \
+	+ " NICK " + newNick + "\r\n")
+
+# define RPL_UPDATEMODE(nick, user, channel, sign, mode, arg) (":" + nick + "!" + user + "@localhost" \
+	+ " MODE " + channel + " " + sign + mode + " " + arg + "\r\n")
+
+// ---- NUMERICS : RPL_* ----
 
 # define RPL_AWAY(nick, target, message) (":" + SERVER_NAME + " 301 " \
 	+ nick + " " + target + " :" + message + "\r\n")
@@ -44,7 +58,7 @@
 # define RPL_ENDOFNAMES(nick, channel) (":" + SERVER_NAME + " 366 " \
 	+ nick + " " + channel + " :End of /NAMES list\r\n")
 
-// ---- ERR_* ----
+// ---- NUMERICS : ERR_* ----
 
 # define ERR_NOSUCHNICK(nick, target) (":" + SERVER_NAME + " 401 " \
 	+ nick + " " + target + " :No such nick/channel\r\n")
