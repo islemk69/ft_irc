@@ -2,6 +2,7 @@
 # define SERVER_HPP
 
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <iostream>
@@ -12,7 +13,9 @@
 #include <vector>
 #include <poll.h>
 #include <map>
+#include <cerrno>
 #include "Client.hpp"
+
 
 
 # define PORT 6667
@@ -21,6 +24,9 @@
 #define GREEN "\033[1;32m"
 #define RED "\033[1;31m"
 #define DEFAULT "\033[0m"
+
+
+# define ERR_NONICKNAMEGIVEN(nick) ("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHh\n")
 
 class Client;
 
@@ -37,6 +43,7 @@ class Server{
         void initServer();
         void execServer();
         int getServerSocket();
+        static void sendToClient(int fd, const std::string &content);
         ~Server();
 };
 

@@ -63,13 +63,15 @@ void Server::execServer(){
             this->_fds.back().events = POLLIN; //pareil je le met en POLLIN pour surveiller ses events
         }
     }
-    //envent = nouvel evenement detecte / revent = donne a lire sur le fd
+
+    //                             A MODIFIER EN ITERATION OBJET CLIENT + SEND
+    // envent = nouvel evenement detecte / revent = donne a lire sur le fd
     for (size_t i = 1; i < this->_fds.size(); ++i) { //iterations dans tout les fd client (n + 1)
         if (this->_fds[i].revents & POLLIN) {
             // donnés clients
             char buffer[1024];
             memset(buffer, 0, sizeof(buffer));
-            ssize_t bytesRead = read(this->_fds[i].fd, buffer, sizeof(buffer));
+            ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
             if (bytesRead == -1) {
                 perror("Error reading client data");
                 close(this->_fds[i].fd);
@@ -84,12 +86,26 @@ void Server::execServer(){
             }
             // a partir de la il faut traiter les commandes et les parser
             std::cout << "Client says: " << buffer << std::endl;
-            const char* response = "Hello from server!";
-            ssize_t bytesSent = write(this->_fds[i].fd, response, strlen(response));
-            if (bytesSent == -1) {
-                perror("Error sending data to client");
-            }
+            // const char* response = "Hello from server!";
+            // ssize_t bytesSent = write(this->_fds[i].fd, response, strlen(response));
+            // if (bytesSent == -1) {
+            //     perror("Error sending data to client");
+            // }
+            Server::sendToClient(_fds[i].fd, ERR_NONICKNAMEGIVEN(std::string("Client")));
         }
+    }
+    
+}
+
+void Server::sendToClient(int fd, const std::string &content) {
+    size_t bytesSent = 0;
+    while (bytesSent < content.length()) {
+        ssize_t len = send(fd, content.c_str(), content.length(), 0);
+        if (len < 0) {
+            std::cout << "send() error: " << strerror(errno) << std::endl;
+            break ;
+        }
+        bytesSent += len;
     }
 }
 

@@ -15,7 +15,6 @@ void printLoadingAnimation() {
     std::cout.flush();
 }
 
-
 int main(int argc, char **argv) {
     if (argc != 3)
         return (std::cerr << RED << "Usage: ./ircserv <port> <password>" << DEFAULT << std::endl, 1);
