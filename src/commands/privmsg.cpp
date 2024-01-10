@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/09 18:31:32 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/10 14:48:42 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NORECIPIENT(client->nick, command.command));
 		return ;
 	}
-	std::vector<std::string>	targets = getTargets(command.args[0]);
+	std::vector<std::string>	targets = Utils::split(command.args[0], ',');
 
 	if (targets.size() > TARGETMAX)
 	{
