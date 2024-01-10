@@ -32,17 +32,25 @@ class Client;
 
 class Server{
     private:
-        unsigned int _port;
-        std::string _password;
-        std::vector<pollfd> _fds;
-        int _serverSocket;
-        std::map<int, Client*> _clients;
+
+        unsigned int                    _port;
+        int                             _serverSocket;
+
+        std::vector<pollfd>             _fds;
+        // std::map<std::string, Channel*> _channels;
+        std::map<int, Client*>          _clients;
+
+        std::string 					_password;
+        std::string 					_name;
+        std::string 					_creationDate;
+
     public:
         Server(Server &cpy);
         Server(std::string port, std::string password);
         void initServer();
         void execServer();
         int getServerSocket();
+        void readClientRequest(int i);
         static void sendToClient(int fd, const std::string &content);
         ~Server();
 };

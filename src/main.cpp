@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
 void printLoadingAnimation() {
     const char* animationChars = ".oOo";
