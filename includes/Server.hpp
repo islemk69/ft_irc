@@ -50,12 +50,13 @@ class Server{
     public:
         Server(Server &cpy);
         Server(std::string port, std::string password);
-        void initServer();
-        void execServer();
-        int getServerSocket();
-        void readClientRequest(int i);
+        void        initServer();
+        void        execServer();
+        int         getServerSocket();
+        void        readClientRequest(int i);
         static void sendToClient(int fd, const std::string &content);
         Client 		*getClientByNick(const std::string &nick);
+        void        addChannel(Channel *newChannel);
         ~Server();
 };
 

@@ -18,6 +18,11 @@ Channel *Client::getChannelByName(const std::string& name) {
 	return NULL;
 }
 
+void Client::addChannel(Channel *newChannel) {
+	this->_channels[newChannel->getName()] = newChannel;
+}
+
+
 
 Client::~Client(){
     

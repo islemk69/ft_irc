@@ -23,6 +23,7 @@ class Client {
         std::string socketBuffer;
         std::string awayMessage;
         int          getClientFd();
+        void         addChannel(Channel *newChannel);   
         Channel 	*getChannelByName(const std::string& name);
         
 };

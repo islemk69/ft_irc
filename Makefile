@@ -1,5 +1,5 @@
 CC = c++
-SRCS = src/main.cpp src/Server.cpp src/Client.cpp src/Channel.cpp
+SRCS = src/main.cpp src/Server.cpp src/Client.cpp src/Channel.cpp 
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))

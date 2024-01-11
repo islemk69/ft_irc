@@ -120,6 +120,10 @@ Client 		*Server::getClientByNick(const std::string &nick){
 	return NULL;
 }
 
+void Server::addChannel(Channel *newChannel) {
+	this->_channels[newChannel->getName()] = newChannel;
+}
+
 int Server::getServerSocket(){return this->_serverSocket;}
 
 Server::~Server(){}

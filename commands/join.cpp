@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../commands.hpp"
+#include "../includes/commands.hpp"
 
 void	joinCmd(Client *client, const Command &command, Server *server)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../commands.hpp"
+#include "../includes/commands.hpp"
 
 bool	isNickValid(std::string nick)
 {
