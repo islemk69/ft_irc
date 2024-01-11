@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:06:52 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/09 18:16:48 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/10 15:04:57 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include "numericReplies.hpp"
 
 # define TARGETMAX 30
+# define CHANJOINMAX 15
+# define CHANNAMEMAXLEN 32
 
 // ANY-USER COMMANDS
 void	passCmd(Client *client, const Command &command, Server *server);
