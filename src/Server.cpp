@@ -105,6 +105,21 @@ void Server::sendToClient(int fd, const std::string &content) {
 // 	return NULL;
 // }
 
+std::string copyToUpper(std::string src){
+    std::string res = src;
+	std::transform(src.begin(), src.end(), src.begin(), toupper);
+	return res;
+}
+
+Client 		*Server::getClientByNick(const std::string &nick){
+    	for (std::map<int, Client*>::iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (copyToUpper(nick) == copyToUpper(it->second->nickName)) {
+			return it->second;
+		}
+	}
+	return NULL;
+}
+
 int Server::getServerSocket(){return this->_serverSocket;}
 
 Server::~Server(){}

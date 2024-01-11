@@ -13,8 +13,10 @@
 #include <vector>
 #include <poll.h>
 #include <map>
+#include <algorithm>
 #include <cerrno>
 #include "Client.hpp"
+#include "Channel.hpp"
 
 
 
@@ -29,6 +31,7 @@
 # define ERR_NONICKNAMEGIVEN(nick) ("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHh\n")
 
 class Client;
+class Channel;
 
 class Server{
     private:
@@ -37,7 +40,7 @@ class Server{
         int                             _serverSocket;
 
         std::vector<pollfd>             _fds;
-        // std::map<std::string, Channel*> _channels;
+        std::map<std::string, Channel*> _channels;
         std::map<int, Client*>          _clients;
 
         std::string 					_password;
@@ -52,6 +55,7 @@ class Server{
         int getServerSocket();
         void readClientRequest(int i);
         static void sendToClient(int fd, const std::string &content);
+        Client 		*getClientByNick(const std::string &nick);
         ~Server();
 };
 

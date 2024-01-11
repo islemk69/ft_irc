@@ -24,7 +24,7 @@ class Client {
         std::string awayMessage;
         int          getClientFd();
         Channel 	*getChannelByName(const std::string& name);
-
+        
 };
 
 #endif
