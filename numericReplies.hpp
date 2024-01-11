@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   numericReplies.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: charlie <charlie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:19:04 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/09 14:32:44 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/11 17:33:31 by charlie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef NUMERICREPLIES_HPP
 # define NUMERICREPLIES_HPP
 
-# define SERVER_NAME FT_IRC
+# define SERVER_NAME std::string("FT_IRC")
 
 // ---- CUSTOM RPL_* ----
 
