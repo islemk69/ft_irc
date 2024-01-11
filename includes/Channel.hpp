@@ -8,14 +8,20 @@ class Server;
 class Client;
 
 class Channel {
+
+private:
+
+    std::string _name;  
+    Server *_server;
+
 public:
+
 	Channel(std::string name, Client *client, Server *server);
 	Channel();
     ~Channel();
     std::string     getName() const;
-
-private:
-    std::string _name;  
-    Server *_server;
+    void            sendToAll(const std::string &msg);
+    void            eraseClient(const std::string & client);
+    Client          *getClientByNick(const std::string &nick);
 };
 #endif

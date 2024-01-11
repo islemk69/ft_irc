@@ -5,7 +5,7 @@ OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
 FLAGS =  -std=c++98 -MMD -MP
 NAME = ircserv
-HEAD = includes/Server.hpp includes/Client.hpp includes/Channel.hpp
+HEAD = includes/Server.hpp includes/Client.hpp includes/Channel.hpp includes/numericReplies.hpp	
 RM = rm -f
 
 GREEN = \033[0;32m

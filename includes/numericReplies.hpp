@@ -13,7 +13,7 @@
 #ifndef NUMERICREPLIES_HPP
 # define NUMERICREPLIES_HPP
 
-# define SERVER_NAME FT_IRC
+# define SERVER_NAME std::string("FT_IRC")
 
 // ---- CUSTOM RPL_* ----
 

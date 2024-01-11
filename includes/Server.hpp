@@ -17,6 +17,7 @@
 #include <cerrno>
 #include "Client.hpp"
 #include "Channel.hpp"
+#include "numericReplies.hpp"
 
 
 
@@ -28,7 +29,6 @@
 #define DEFAULT "\033[0m"
 
 
-# define ERR_NONICKNAMEGIVEN(nick) ("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHh\n")
 
 class Client;
 class Channel;
