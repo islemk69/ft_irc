@@ -54,8 +54,6 @@ void Server::execServer(){
             this->_fds.back().events = POLLIN; 
         }
     }
-
-
     for (size_t i = 1; i < this->_fds.size(); ++i) {
         if (this->_fds[i].revents & POLLIN) {
             this->readClientRequest(i);
@@ -97,6 +95,15 @@ void Server::sendToClient(int fd, const std::string &content) {
         bytesSent += len;
     }
 }
+
+// Client *Server::getClientByName(const std::string &name) {
+// 	for (clientIt it = this->_clients.begin(); it != this->_clients.end(); it++) {
+// 		if (Utils::copyToUpper(name) == Utils::copyToUpper(it->second->nickName)) {
+// 			return it->second;
+// 		}
+// 	}
+// 	return NULL;
+// }
 
 int Server::getServerSocket(){return this->_serverSocket;}
 
