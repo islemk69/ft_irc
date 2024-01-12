@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 13:16:39 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:35:50 by ikaismou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/commands.hpp"
+#include "../../includes/commands.hpp"
 
 void	privmsgCmd(Client *client, const Command &command, Server *server)
 {
@@ -19,7 +19,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NORECIPIENT(client->nick, command.command));
 		return ;
 	}
-	std::vector<std::string>	targets = Utils::split(command.args[0], ',');
+	std::vector<std::string>	targets = ft_split(command.args[0], ',');
 
 	if (targets.size() > TARGETMAX)
 	{
@@ -28,7 +28,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 	}
 	for(std::vector<std::string>::iterator it = targets.begin(); it != targets.end(); it++)
 	{
-		if (*it[0] == '#')
+		if (it->find("#") == 0)
 		{
 			std::string	chanName = *it;
 			chanName.erase(0, 1);
@@ -50,7 +50,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 				return ;
 			}
 			channel->sendToAllButClient(client->fd, RPL_CMD(client->nick, client->user, \
-				"PRIVMSG " + target, command.args[1]));
+				"PRIVMSG " + chanName, command.args[1]));
 		}
 		else
 		{

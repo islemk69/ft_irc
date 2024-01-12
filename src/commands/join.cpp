@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 13:27:43 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:38:11 by ikaismou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/commands.hpp"
+#include "../../includes/commands.hpp"
 
 void	joinCmd(Client *client, const Command &command, Server *server)
 {
@@ -24,10 +24,10 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 		client->leaveAll();
 		return ;
 	}
-	std::vector<std::string>	channels = Utils::split(command.args[0], ',');
+	std::vector<std::string>	channels = ft_split(command.args[0], ',');
 	std::vector<std::string>	keys;
 	if (command.args.size() > 1)
-		keys = Utils::split(command.args[1], ',');
+		keys = ft_split(command.args[1], ',');
 	std::vector<std::string>::iterator	keyIt = keys.begin();
 	for(std::vector<std::string>::iterator chanIt = channels.begin(); chanIt != channels.end(); chanIt++)
 	{
@@ -41,7 +41,7 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			Server::sendToClient(client->fd, ERR_BADCHANMASK(*chanIt));
 			continue ;
 		}
-		if (*chanIt[0] != '#')
+		if (chanIt->find('#') != 0)
 		{
 			Server::sendToClient(client->fd, ERR_NOSUCHCHANNEL(client->nick, *chanIt));
 			continue ;
@@ -51,10 +51,12 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			Server::sendToClient(client->fd, ERR_TOOMANYCHANNELS(client->nick, *chanIt));
 			continue ;
 		}
-		Channel	*existingChannel = server->getChannelByName(*chanIt);
+		std::string	chanName = *chanIt;
+		chanName.erase(0, 1);
+		Channel	*existingChannel = server->getChannelByName(chanName);
 		if (!existingChannel)
 		{
-			Channel	*newChan = new Channel(*chanIt, client, server);
+			Channel	*newChan = new Channel(chanName, client);
 
 			if (keyIt != keys.end())
 			{
@@ -63,19 +65,19 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			}
 			server->addChannel(newChan);
 			client->addChannel(newChan);
-			Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, "JOIN", newChan->name));
+			Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, "JOIN", newChan->getName()));
 			continue ;
 		}
 		else
 		{
-			if (existingChannel->hasMode('k') && (keyIt == keys.end() || *keyIt != existingChan->getKey()))
+			if (existingChannel->hasMode('k') && (keyIt == keys.end() || *keyIt != existingChannel->getKey()))
 			{
 				Server::sendToClient(client->fd, ERR_BADCHANNELKEY(client->nick, *chanIt));
 				continue ;
 			}
 			if (existingChannel->hasMode('i') && !existingChannel->isInvited(client->nick))
 			{
-				Server::sendToClient(client->fd, ERR_INVITEONLYCHAN(client->nick, *chanIt))
+				Server::sendToClient(client->fd, ERR_INVITEONLYCHAN(client->nick, *chanIt));
 				continue ;
 			}
 			if (existingChannel->hasMode('l') && existingChannel->getNumberOfClients() == existingChannel->getClientLimit())
@@ -84,9 +86,9 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 				continue ;
 			}
 			client->addChannel(existingChannel);
-			channel->addClient(client);
-			channel->sendToAll(RPL_CMD(client->nick, client->user, "JOIN", *chanIt));
-			Server::sendToClient(client->fd, RPL_TOPIC(client->nick, channel->getName(), channel->topic));
+			existingChannel->addClient(client);
+			existingChannel->sendToAll(RPL_CMD(client->nick, client->user, "JOIN", *chanIt));
+			Server::sendToClient(client->fd, RPL_TOPIC(client->nick, existingChannel->getName(), existingChannel->getTopic()));
 		}
 		if (keyIt != keys.end())
 			keyIt++;

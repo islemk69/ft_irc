@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:16:20 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/08 17:52:10 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:40:02 by ikaismou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/commands.hpp"
+#include "../../includes/commands.hpp"
 
 bool	isNickValid(std::string nick)
 {
@@ -27,7 +27,7 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 {
 	if (!client->hasPass)
 	{
-		Server::sendToClient(client->fd, std::string("Error : PASS is needed to register\r\n"))
+		Server::sendToClient(client->fd, std::string("Error : PASS is needed to register\r\n"));
 		return ;
 	}
 	if (command.args.empty() || command.args[0].length() == 0)
@@ -56,17 +56,16 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 	{
 		Server::sendToClient(client->fd, std::string("Nick " + client->nick \
 			+ " has succesfully been changed to " + command.args[0] + "\r\n"));
-
-		std::map<std::string, Channel* >	channels = client.getChannels();
+		std::map<std::string, Channel* >	channels = client->getChannels();
 		for (std::map<std::string, Channel* >::iterator chanIt = channels.begin(); chanIt != channels.end(); chanIt++)
 		{
-			chanIt->second.updateClient(client->nick, command.args[0]);
-			std::map<std::string, Client* >	channelClients = chanIt->second.getClients();
-			for (std::map<std::string, Client* >::iterator clientIt = channelClients.begin(); \
+			chanIt->second->updateClient(client->nick, command.args[0]);
+			std::map<std::string, chanUser>	channelClients = chanIt->second->getClients();
+			for (std::map<std::string, chanUser>::iterator clientIt = channelClients.begin(); \
 				clientIt != channelClients.end(); clientIt++)
 			{
-				if (clientIt->second.nick != client->nick)
-					Server::sendToClient(clientIt->second.fd, std::string(client->nick \
+				if (clientIt->second.client->nick != client->nick)
+					Server::sendToClient(clientIt->second.client->fd, std::string(client->nick \
 						+ " has changed his nick to " + command.args[0] + "\r\n"));
 			}
 		}

@@ -46,7 +46,7 @@ void Server::execServer(){
         int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
             Client* newClient = new Client(fdClient);
-            std::cout << "Client n " << iter << ", fd ----> " << newClient->getClientFd() << std::endl; // DEBUG
+            std::cout << "Client n " << iter << ", fd ----> " << newClient->fd << std::endl; // DEBUG
             iter++; //DEBUG
             this->_clients[fdClient] = newClient;
             this->_fds.push_back(pollfd()); 
@@ -115,11 +115,7 @@ Channel *Server::getChannelByName(const std::string& name) {
 }
 
 
-std::string copyToUpper(std::string src){
-    std::string res = src;
-	std::transform(src.begin(), src.end(), src.begin(), toupper);
-	return res;
-}
+
 
 Client 		*Server::getClientByNick(const std::string &nick){
     for (std::map<int, Client*>::iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
@@ -132,6 +128,18 @@ Client 		*Server::getClientByNick(const std::string &nick){
 
 void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->getName()] = newChannel;
+}
+
+bool Server::isNickUsed(Client *client, std::string nick) {
+	std::string upperNick = copyToUpper(nick);
+	std::transform(nick.begin(), nick.end(), nick.begin(), toupper);
+	std::map<int, Client*>::iterator it;
+	for (it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second->fd != client->fd && upperNick == copyToUpper(it->second->nick)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 std::string Server::getPassword()const{

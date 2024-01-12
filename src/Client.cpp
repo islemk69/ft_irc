@@ -1,12 +1,8 @@
 #include "../includes/Client.hpp"
 
-Client::Client(int clientFd){
-    this->_clientFd = clientFd;
+Client::Client(int fd){
+    this->fd = fd;
     this->isRegistered = false;
-}
-
-int Client::getClientFd() {
-    return this->_clientFd;
 }
 
 Channel *Client::getChannelByName(const std::string& name) {
@@ -39,6 +35,10 @@ void	Client::leaveAll(){
 
 int		Client::chansJoined(){
 	return this->_channels.size();
+}
+
+std::map<std::string, Channel*> Client::getChannels()const {
+	return this->_channels;
 }
 
 Client::~Client(){

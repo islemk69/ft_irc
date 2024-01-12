@@ -15,9 +15,12 @@
 #include <map>
 #include <algorithm>
 #include <cerrno>
+#include <sstream>
+#include "Command.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "numericReplies.hpp"
+#include "utils.hpp"
 
 
 
@@ -61,6 +64,8 @@ class Server{
         void        addChannel(Channel *newChannel);
         Channel     *getChannelByName(const std::string& name);
         std::string getPassword()const;
+		void		updateClient(std::string oldNick, std::string newNick);	
+		bool		isNickUsed(Client *client, std::string nick);	
         ~Server();
 
 };
