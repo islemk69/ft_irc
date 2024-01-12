@@ -1,11 +1,11 @@
 CC = c++
-SRCS = src/main.cpp
+SRCS = src/main.cpp src/Server.cpp src/Client.cpp src/Channel.cpp 
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
 FLAGS =  -std=c++98 -MMD -MP
 NAME = ircserv
-HEAD =
+HEAD = includes/Server.hpp includes/Client.hpp includes/Channel.hpp includes/numericReplies.hpp	
 RM = rm -f
 
 GREEN = \033[0;32m
@@ -26,7 +26,7 @@ $(NAME): $(OBJS) ${HEAD}
 
 $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)
-
+	
 -include $(DEPS)
 
 clean:
