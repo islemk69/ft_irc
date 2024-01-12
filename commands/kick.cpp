@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 14:51:23 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/09 17:39:53 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:14:17 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 	chanUser *cu = channel->getClientByNick(client->nick);
 	if (channel->hasMode('i') && !cu->isOp)
 	{
-		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->name));
+		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;
 	}
 	Client	*target = server->getClientByNick(command.args[0]);
@@ -45,16 +45,16 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 	}
 	if (!channel->getClientByNick(target->nick))
 	{
-		Server::sendToClient(client->fd, ERR_USERNOTINCHANNEL(client->nick, target->nick, channel->name));
+		Server::sendToClient(client->fd, ERR_USERNOTINCHANNEL(client->nick, target->nick, channel->getName()));
 		return ;
 	}
 	std::string	reason = "";
 	if (request.args.size() > 2)
 		reason = request.args[2];
 	Server::sendToClient(target->fd, RPL_CMD(target->nick, target->user, \
-		"KICK", channel->name + " " + client->nick + " " + reason));
+		"KICK", channel->getName() + " " + client->nick + " " + reason));
 	channel->sendToAll(RPL_CMD(client->nick, client->user, \
-		"KICK", channel->name + " " + target->nick + " " + reason));
-	target->eraseChannel(channel->name);
+		"KICK", channel->getName() + " " + target->nick + " " + reason));
+	target->eraseChannel(channel->getName());
 	channel->eraseClient(target->nick);
 }

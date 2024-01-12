@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 13:08:08 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:36:36 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,13 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 	}
 	if (command.args.size() == 1)
 	{
-		Server::sendToClient(client->fd, RPL_CHANNELMODEIS(client->nick, channel->name, channel->getModes()));
-		Server::sendToClient(client->fd, RPL_CREATIONTIME(client->nick, channel->name, channel->getCreationTime()));
+		Server::sendToClient(client->fd, RPL_CHANNELMODEIS(client->nick, channel->getName(), channel->getModes()));
 		return ;
 	}
 	chanUser	*cu = channel->getClientByNick(client->nick);
 	if (!cu->isOp)
 	{
-		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->name));
+		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;
 	}
 	// - set a map<string, string>, first string being key (ex +o / -l /...), 

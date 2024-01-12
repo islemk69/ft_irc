@@ -6,15 +6,14 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:06:52 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/10 15:04:57 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:42:45 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMANDS_HPP
 # define COMMANDS_HPP
 
-# include "src/server.hpp"
-# include "numericReplies.hpp"
+# include "Server.hpp"
 
 # define TARGETMAX 30
 # define CHANJOINMAX 15

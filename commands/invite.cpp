@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 13:58:23 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/09 15:59:53 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:14:17 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	inviteCmd(Client *client, const Command &command, Server *server)
 	chanUser *cu = channel->getClientByNick(client->nick);
 	if (channel->hasMode('i') && !cu->isOp)
 	{
-		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->name))
+		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()))
 		return ;
 	}
 	Client	*target = server->getClientByNick(command.args[0]);
@@ -45,10 +45,10 @@ void	inviteCmd(Client *client, const Command &command, Server *server)
 	}
 	if (channel->getClientByNick(target->nick))
 	{
-		Server::sendToClient(client->fd, ERR_USERONCHANNEL(client->nick, target->nick, channel->name))
+		Server::sendToClient(client->fd, ERR_USERONCHANNEL(client->nick, target->nick, channel->getName()))
 		return ;
 	}
-	Server::sendToClient(client->fd, RPL_INVITING(client->nick, target->nick, channel->name));
-	Server::sendToClient(target->fd, RPL_INVITE(client->nick, client->user, target->nick, channel->name));
+	Server::sendToClient(client->fd, RPL_INVITING(client->nick, target->nick, channel->getName()));
+	Server::sendToClient(target->fd, RPL_INVITE(client->nick, client->user, target->nick, channel->getName()));
 	channel->addInvite(target->nick);
 }
