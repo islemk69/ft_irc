@@ -134,6 +134,10 @@ void Server::addChannel(Channel *newChannel) {
 	this->_channels[newChannel->getName()] = newChannel;
 }
 
+std::string Server::getPassword()const{
+    return this->_password; 
+}
+
 int Server::getServerSocket(){return this->_serverSocket;}
 
 Server::~Server(){}

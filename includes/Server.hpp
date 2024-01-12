@@ -60,6 +60,7 @@ class Server{
         Client 		*getClientByNick(const std::string &nick);
         void        addChannel(Channel *newChannel);
         Channel     *getChannelByName(const std::string& name);
+        std::string getPassword()const;
         ~Server();
 
 };
