@@ -105,6 +105,16 @@ void Server::sendToClient(int fd, const std::string &content) {
 // 	return NULL;
 // }
 
+Channel *Server::getChannelByName(const std::string& name) {
+	for (std::map<std::string, Channel*>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++) {
+		if (it->second->getName() == name) {
+			return it->second;
+		}
+	}
+	return NULL;
+}
+
+
 std::string copyToUpper(std::string src){
     std::string res = src;
 	std::transform(src.begin(), src.end(), src.begin(), toupper);
@@ -113,7 +123,7 @@ std::string copyToUpper(std::string src){
 
 Client 		*Server::getClientByNick(const std::string &nick){
     for (std::map<int, Client*>::iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
-        if (copyToUpper(nick) == copyToUpper(it->second->nickName)) {
+        if (copyToUpper(nick) == copyToUpper(it->second->nick)) {
             return it->second;
         }
     }

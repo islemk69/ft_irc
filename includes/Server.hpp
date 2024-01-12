@@ -34,6 +34,7 @@ class Client;
 class Channel;
 
 class Server{
+
     private:
 
         unsigned int                    _port;
@@ -48,6 +49,7 @@ class Server{
         std::string 					_creationDate;
 
     public:
+
         Server(Server &cpy);
         Server(std::string port, std::string password);
         void        initServer();
@@ -57,7 +59,9 @@ class Server{
         static void sendToClient(int fd, const std::string &content);
         Client 		*getClientByNick(const std::string &nick);
         void        addChannel(Channel *newChannel);
+        Channel     *getChannelByName(const std::string& name);
         ~Server();
+
 };
 
 #endif

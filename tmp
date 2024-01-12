@@ -1,0 +1,17 @@
+Server :
+
+-sendToClient
+-getClientByNick
+-getChannelByName
+-addChannel
+-isNickUsed
+-getPassword()
+
+
+Client :
+
+-getChannelByName
+-leaveAll
+-addChannel
+-eraseChannel
+-chansJoined    
