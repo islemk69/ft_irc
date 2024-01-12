@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/10 16:20:08 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:27:43 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			Server::sendToClient(client->fd, ERR_TOOMANYCHANNELS(client->nick, *chanIt));
 			continue ;
 		}
-		Channel	*existingChan = server->getChannelByName(*chanIt);
-		if (!existing)
+		Channel	*existingChannel = server->getChannelByName(*chanIt);
+		if (!existingChannel)
 		{
 			Channel	*newChan = new Channel(*chanIt, client, server);
 
@@ -86,7 +86,7 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			client->addChannel(existingChannel);
 			channel->addClient(client);
 			channel->sendToAll(RPL_CMD(client->nick, client->user, "JOIN", *chanIt));
-			Server::sendToClient(client->fd, RPL_TOPIC(client->nick, channel->name, channel->topic));
+			Server::sendToClient(client->fd, RPL_TOPIC(client->nick, channel->getName(), channel->topic));
 		}
 		if (keyIt != keys.end())
 			keyIt++;

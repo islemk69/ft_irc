@@ -6,11 +6,11 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 13:09:10 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:08:45 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../commands.hpp"
+#include "../includes/commands.hpp"
 
 void	modeCmd(Client *client, const Command &command, Server *server)
 {
@@ -34,14 +34,13 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 	}
 	if (command.args.size() == 1)
 	{
-		Server::sendToClient(client->fd, RPL_CHANNELMODEIS(client->nick, channel->name, channel->getModes()));
-		Server::sendToClient(client->fd, RPL_CREATIONTIME(client->nick, channel->name, channel->getCreationTime()));
+		Server::sendToClient(client->fd, RPL_CHANNELMODEIS(client->nick, channel->getName(), channel->getModes()));
 		return ;
 	}
 	chanUser	*cu = channel->getClientByNick(client->nick);
 	if (!cu->isOp)
 	{
-		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->name));
+		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;
 	}
 	int							op = 0;
@@ -127,10 +126,7 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					channel->setKey(newKey);
 				}
 				else
-				{
 					channel->rmMode('k');
-					channel->rmKey();
-				}
 				break ;
 			case 'o' :
 				std::string	strTarget = *flagsIt;
@@ -144,7 +140,7 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 				chanUser	*cu = channel->getClientByNick(strTarget);
 				if (!cu)
 				{
-					Server::sendToClient(client->fd, ERR_USERNOTINCHANNEL(client->nick, strTarget, channel->name));
+					Server::sendToClient(client->fd, ERR_USERNOTINCHANNEL(client->nick, strTarget, channel->getName()));
 					break ;
 				}
 				if (*flagsIt[0] == '+')

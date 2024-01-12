@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/10 14:48:42 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:16:39 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 				Server::sendToClient(client->fd, ERR_NOTEXTTOSEND(client->nick));
 				return ;
 			}
-			channel->sendToAllButClient(RPL_CMD(client->nick, client->user, \
+			channel->sendToAllButClient(client->fd, RPL_CMD(client->nick, client->user, \
 				"PRIVMSG " + target, command.args[1]));
 		}
 		else
