@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 14:51:23 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 13:14:17 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:53:49 by ikaismou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/commands.hpp"
+#include "../../includes/commands.hpp"
 
 void	kickCmd(Client *client, const Command &command, Server *server)
 {
@@ -19,13 +19,13 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NEEDMOREPARAMS(client->nick, command.command));
 		return ;
 	}
-	Channel	*channel = server->getChannelByName(command.args[1])
+	Channel	*channel = server->getChannelByName(command.args[1]);
 	if (!channel)
 	{
 		Server::sendToClient(client->fd, ERR_NOSUCHCHANNEL(client->nick, command.args[1]));
 		return ;
 	}
-	channel = client->getChannelByName(command.args[1])
+	channel = client->getChannelByName(command.args[1]);
 	if (!channel)
 	{
 		Server::sendToClient(client->fd, ERR_NOTONCHANNEL(client->nick, command.args[1]));
@@ -49,8 +49,8 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 		return ;
 	}
 	std::string	reason = "";
-	if (request.args.size() > 2)
-		reason = request.args[2];
+	if (command.args.size() > 2)
+		reason = command.args[2];
 	Server::sendToClient(target->fd, RPL_CMD(target->nick, target->user, \
 		"KICK", channel->getName() + " " + client->nick + " " + reason));
 	channel->sendToAll(RPL_CMD(client->nick, client->user, \

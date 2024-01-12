@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 15:08:45 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:05:52 by ikaismou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/commands.hpp"
+#include "../../includes/commands.hpp"
 
 void	modeCmd(Client *client, const Command &command, Server *server)
 {
@@ -23,10 +23,10 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 	Channel	*channel = server->getChannelByName(command.args[0]);
 	if (!channel)
 	{
-		Server::sendToClient(client->fd, ERR_NOSUCHCHANNEL(client->nick, command.args[0]))
+		Server::sendToClient(client->fd, ERR_NOSUCHCHANNEL(client->nick, command.args[0]));
 		return ;
 	}
-	channel = client->getChannelByName(command.args[0])
+	channel = client->getChannelByName(command.args[0]);
 	if (!channel)
 	{
 		Server::sendToClient(client->fd, ERR_NOTONCHANNEL(client->nick, command.args[0]));
@@ -45,6 +45,7 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 	}
 	int							op = 0;
 	int							flagsWithParams = 0;
+	std::string					plusMinusO = "+o";
 	std::vector<std::string>	flags;
 	
 	for (size_t i = 0; i < command.args[1].length(); i++)
@@ -83,8 +84,9 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					Server::sendToClient(client->fd, ERR_NEEDMOREPARAMS(client->nick, command.command));
 					return ;
 				}
-				std::string	opO = op ? "+o" : "-o";
-				flags.push_back(opO + " " + command.args[2 + flagsWithParams]);
+				if (!op)
+					plusMinusO = "-o";
+				flags.push_back(plusMinusO + " " + command.args[2 + flagsWithParams]);
 				flagsWithParams++;
 				break ;
 			case 'l' :
@@ -102,25 +104,32 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					flags.push_back("-l");
 				break ;
 			default :
-				Server::sendToClient(client->fd, std::string("Error : MODE flag not managed : " + command.args[1][i] + "\r\n"));
+				Server::sendToClient(client->fd, std::string("Error : MODE flag not managed : " + command.args[1][i] + std::string("\r\n")));
 				break ;
 		}
 	}
 	if (flags.empty())
 		return ;
-	for (std::vector<std::string>::iterator flagsIt = flags.begin(); flagsIt != flags.end(); flags++)
+	for (std::vector<std::string>::iterator flagsIt = flags.begin(); flagsIt != flags.end(); flagsIt++)
 	{
-		switch (*flagsIt[1])
+		std::string			flagsItStr = *flagsIt;
+		std::string			strTarget;
+		Client				*target;
+		chanUser			*cu;
+		std::string			limitStr;
+		std::istringstream	limitIss;
+		int					limitValue;
+		switch (flagsItStr[1])
 		{
 			case 'i' :
-				*flagsIt[0] == '+' ? channel->addMode('i') : channel->rmMode('i');
+				flagsItStr[0] == '+' ? channel->addMode('i') : channel->rmMode('i');
 				break ;
 			case 't' :
-				*flagsIt[0] == '+' ? channel->addMode('t') : channel->rmMode('t');
+				flagsItStr[0] == '+' ? channel->addMode('t') : channel->rmMode('t');
 			case 'k' :
-				if (*flagsIt[0] == '+')
+				if (flagsItStr[0] == '+')
 				{
-					std::string	newKey = *flagsIt;
+					std::string	newKey = flagsItStr;
 					newKey.erase(0, 3);
 					channel->addMode('k');
 					channel->setKey(newKey);
@@ -129,32 +138,31 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					channel->rmMode('k');
 				break ;
 			case 'o' :
-				std::string	strTarget = *flagsIt;
+				strTarget = flagsItStr;
 				strTarget.erase(0, 3);
-				Client	*target = server->getClientByNick(strTarget);
+				target = server->getClientByNick(strTarget);
 				if (!target)
 				{
 					Server::sendToClient(client->fd, ERR_NOSUCHNICK(client->nick, strTarget));
 					break ;
 				}
-				chanUser	*cu = channel->getClientByNick(strTarget);
+				cu = channel->getClientByNick(strTarget);
 				if (!cu)
 				{
 					Server::sendToClient(client->fd, ERR_USERNOTINCHANNEL(client->nick, strTarget, channel->getName()));
 					break ;
 				}
-				if (*flagsIt[0] == '+')
+				if (flagsItStr[0] == '+')
 					cu->isOp = true;
 				else
 					cu->isOp = false;
 				break ;
 			case 'l' :
-				if (*flagsIt[0] == '+')
+				if (flagsItStr[0] == '+')
 				{
-					std::string	limitStr = *flagsIt;
+					limitStr = flagsItStr;
 					limitStr.erase(0, 3);
-					std::istringstream	limitIss(limitStr);
-					int					limitValue;
+					limitIss.str(limitStr);
 					limitIss >> limitValue;
 					if (limitIss.fail() || !limitIss.eof() || limitValue <= 0 || limitValue > 4096)
 					{

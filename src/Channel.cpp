@@ -23,6 +23,16 @@ std::string		Channel::getModes() const
 	return this->_modes;
 }
 
+std::string		Channel::getKey() const
+{
+	return this->_key;
+}
+
+std::string		Channel::getTopic() const
+{
+	return this->_topic;
+}
+
 int				Channel::getNumberOfClients() const
 {
 	return this->_chanUsers.size();
@@ -70,7 +80,12 @@ void            Channel::sendToAllButClient(int fd, const std::string &msg)
 	}
 }
 
-void			Channel::addClient(const Client *client)
+void			Channel::addInvite(const std::string &client)
+{
+	this->_invited.push_back(client);
+}
+
+void			Channel::addClient(Client *client)
 {
 	chanUser	newUser;
 	newUser.client = client;
@@ -80,7 +95,10 @@ void			Channel::addClient(const Client *client)
 
 void            Channel::eraseClient(const std::string & client)
 {
-	this->_chanUsers.erase(client->nick);
+	std::map<std::string, chanUser>::iterator	it = this->_chanUsers.find(client);
+	if (it == this->_chanUsers.end())
+		return ;
+	this->_chanUsers.erase(client);
 }
 
 void			Channel::addMode(const char mode)
@@ -103,9 +121,27 @@ void			Channel::setKey(const std::string &key)
 	this->_key = key;
 }
 
+void			Channel::setTopic(const std::string &newTopic)
+{
+	this->_topic = newTopic;
+}
+
 void			Channel::setClientLimit(int limit)
 {
 	this->_clientLimit = limit;
+}
+
+void			Channel::updateClient(std::string oldNick, std::string newNick)
+{
+	chanUser	temp;
+	std::map<std::string, chanUser>::iterator	it = this->_chanUsers.find(oldNick);
+
+	if (it != this->_chanUsers.end())
+	{
+		temp = it->second;
+		this->_chanUsers.erase(it);
+		this->_chanUsers[newNick] = temp;
+	}
 }
 
 chanUser		*Channel::getClientByNick(const std::string &nick)
@@ -116,4 +152,9 @@ chanUser		*Channel::getClientByNick(const std::string &nick)
 	if (it == this->_chanUsers.end())
 		return NULL;
 	return &it->second;
+}
+
+std::map<std::string, chanUser>	Channel::getClients() const
+{
+	return this->_chanUsers;
 }
