@@ -14,8 +14,7 @@ Server::Server(std::string port, std::string password){
     this->_port = std::atoi(port.c_str());
     if (password.empty())
         throw std::invalid_argument("Password can't be empty");
-    else
-        this->_password = password;
+    this->_password = password;
 }
 
 void Server::initServer(){
