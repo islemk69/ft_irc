@@ -3,6 +3,8 @@ SRCS =	src/main.cpp \
 		src/Server.cpp \
 		src/Client.cpp \
 		src/Channel.cpp \
+		src/Command.cpp \
+		src/Utils.cpp \
 		src/utils.cpp \
 		src/commands/invite.cpp \
 		src/commands/join.cpp \
@@ -23,6 +25,7 @@ HEAD = 	includes/Server.hpp \
 		includes/Client.hpp \
 		includes/Channel.hpp \
 		includes/utils.hpp \
+		includes/Utils.hpp \
 		includes/numericReplies.hpp	\
 		includes/commands.hpp \
 		includes/Command.hpp

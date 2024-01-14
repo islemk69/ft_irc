@@ -17,6 +17,7 @@
 #include <cerrno>
 #include <sstream>
 #include "Command.hpp"
+#include "commands.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "numericReplies.hpp"
@@ -38,24 +39,13 @@ class Channel;
 
 class Server{
 
-    private:
-
-        unsigned int                    _port;
-        int                             _serverSocket;
-
-        std::vector<pollfd>             _fds;
-        std::map<std::string, Channel*> _channels;
-        std::map<int, Client*>          _clients;
-
-        std::string 					_password;
-        std::string 					_name;
-        std::string 					_creationDate;
 
     public:
 
         Server(Server &cpy);
         Server(std::string port, std::string password);
         void        initServer();
+        void        initCommand();
         void        execServer();
         int         getServerSocket();
         void        readClientRequest(int i);
@@ -68,6 +58,21 @@ class Server{
 		bool		isNickUsed(Client *client, std::string nick);	
         ~Server();
 
+        //typedef pour fonction de command qui prend en arguments le client une ref constante sur la commande et un pointeru sur le serveur
+        typedef void (*cmdFct) (Client *client, const Command &cmd, Server *server);
+
+    private:
+
+        unsigned int                    _port;
+        int                             _serverSocket;
+
+        std::vector<pollfd>             _fds;
+        std::map<std::string, Channel*> _channels;
+        std::map<int, Client*>          _clients;
+        std::map<std::string, cmdFct>   _cmds;
+        std::string 					_password;
+        std::string 					_name;
+        std::string 					_creationDate;
 };
 
 #endif

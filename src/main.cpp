@@ -20,9 +20,8 @@ int main(int argc, char **argv) {
         return (std::cerr << RED << "Usage: ./ircserv <port> <password>" << DEFAULT << std::endl, 1);
     std::string password = argv[2];
     std::string port = argv[1];
-    std::cout << port << std::endl;
-    Server server(port, password);
     try {
+        Server server(port, password);
         std::cout << YELLOW << "Launching irc server...." << DEFAULT << std::endl;
         server.initServer();
         printLoadingAnimation();
@@ -34,6 +33,5 @@ int main(int argc, char **argv) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
         return 1;
     }
-    close(server.getServerSocket());
     return 0;
 }

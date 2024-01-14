@@ -1,6 +1,7 @@
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
-
+# include <ostream>
+# include <vector>
 class Command
 {
 	public:

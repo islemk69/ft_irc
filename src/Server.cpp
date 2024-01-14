@@ -2,8 +2,19 @@
 #include <string>
 
 Server::Server(std::string port, std::string password){
+    if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
+		throw std::invalid_argument("Error: Wrong port format");
+	}
+    std::istringstream iss(port);
+    int portNumber;
+    //on met le iss dans le port number
+    iss >> portNumber;
+    if (iss.fail() || portNumber < 1 || portNumber > 65535)
+        throw std::invalid_argument("Error wrong port number");
     this->_port = std::atoi(port.c_str());
-    if (password[0])
+    if (password.empty())
+        throw std::invalid_argument("Password can't be empty");
+    else
         this->_password = password;
 }
 
@@ -12,7 +23,8 @@ void Server::initServer(){
     if (this->_serverSocket == -1) { 
         throw std::runtime_error("Error while creating socket");
     }
-
+    int option = 1;
+    setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
     sockaddr_in serverAddress;
     memset(&serverAddress, 0, sizeof(serverAddress)); 
     serverAddress.sin_family = AF_INET; 
@@ -33,6 +45,18 @@ void Server::initServer(){
     this->_fds.push_back(pollfd()); 
     this->_fds[0].fd = this->_serverSocket;
     this->_fds[0].events = POLLIN;
+}
+
+void Server::initCommand(){
+    this->_cmds["INVITE"] = &inviteCmd;
+    this->_cmds["JOIN"] = &joinCmd;
+    this->_cmds["KICK"] = &kickCmd;
+    this->_cmds["MODE"] = &modeCmd;
+    this->_cmds["NICK"] = &nickCmd;
+    this->_cmds["PASS"] = &passCmd;
+    this->_cmds["PRIVMSG"] = &privmsgCmd;
+    this->_cmds["TOPIC"] = &topicCmd;
+    this->_cmds["USER"] = &userCmd;
 }
 
 int iter = 0; //DEBUG
@@ -62,7 +86,7 @@ void Server::execServer(){
     
 }
 
-void Server::readClientRequest(int i){
+void Server::readClientRequest(int i) {//lis la requete du client 
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
     ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
@@ -81,6 +105,13 @@ void Server::readClientRequest(int i){
     std::cout << "Client says: " << buffer << std::endl;
     Server::sendToClient(_fds[i].fd, ERR_NONICKNAMEGIVEN(std::string("Client")));
     //HUGO TU FOUS TON PERSING A PARTIT D'ICI
+    Command cmd(buffer);
+    std::cout << "ICI" <<std::endl;
+    if (!cmd.isValid) {
+        Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
+        return ;
+    }
+    std::cout << cmd << std::endl;
     //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
 }
 
@@ -113,8 +144,6 @@ Channel *Server::getChannelByName(const std::string& name) {
 	}
 	return NULL;
 }
-
-
 
 
 Client 		*Server::getClientByNick(const std::string &nick){
