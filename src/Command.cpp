@@ -1,5 +1,5 @@
 #include "../includes/Command.hpp"
-#include "../includes/Utils.hpp"
+#include "../includes/utils.hpp"
 
 Command::Command()
 {
@@ -11,7 +11,7 @@ Command::Command(std::string msg) : isValid(true)
         this->isValid = false;
         return ;
     }
-    std::vector<std::string> splitCmd = split(msg, " ");
+    std::vector<std::string> splitCmd = ft_split(msg, ' ');
     if (splitCmd.size() == 0) {
         this->isValid = false;
         return ;
@@ -32,6 +32,7 @@ Command::Command(std::string msg) : isValid(true)
     //une fois qu'on a verifier que la commande ne contient que des caracteres alphanumeriques on les mets dans un tableau
 	std::vector<std::string>::iterator itVec;
 	for (itVec = splitCmd.begin(); itVec != splitCmd.end(); itVec++) {
+        std::cout << *itVec << std::endl;
 		this->args.push_back(*itVec);
 	}
 }

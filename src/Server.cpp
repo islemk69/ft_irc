@@ -116,6 +116,7 @@ void Server::readClientRequest(int i) {
 
     Command cmd(buffer);
 
+
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
         return ;
@@ -126,6 +127,8 @@ void Server::readClientRequest(int i) {
     //si on trouve
     if (it != this->_cmds.end()) {
         std::cout << "cmd trouvee :" << cmd.command << std::endl;
+        std::cout << cmd << std::endl;
+
         it->second(client, cmd, this);
     } else {
         Server::sendToClient(client->fd, "pas trouvee");

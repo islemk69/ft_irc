@@ -7,11 +7,10 @@ std::vector<std::string> split(const std::string & msg, const std::string & deli
 
     while (endPos != std::string::npos) {
         result.push_back(msg.substr(startPos, endPos - startPos));
-        startPos = endPos + 1; // +1 car chaque caractère dans delim est un délimiteur
+        startPos = endPos + 1;
         endPos = msg.find_first_of(delim, startPos);
     }
 
-    // Ajoute le dernier élément
     result.push_back(msg.substr(startPos));
 
     return result;
