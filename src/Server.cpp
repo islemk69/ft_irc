@@ -45,6 +45,7 @@ void Server::initServer(){
     this->_fds.push_back(pollfd()); 
     this->_fds[0].fd = this->_serverSocket;
     this->_fds[0].events = POLLIN;
+    this->initCommand();
 }
 
 void Server::initCommand(){

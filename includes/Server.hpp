@@ -45,7 +45,6 @@ class Server{
         Server(Server &cpy);
         Server(std::string port, std::string password);
         void        initServer();
-        void        initServer();
         void        initCommand();
         void        execServer();
         int         getServerSocket();
