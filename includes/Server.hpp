@@ -45,21 +45,26 @@ class Server{
         Server(Server &cpy);
         Server(std::string port, std::string password);
         void        initServer();
+        void        initServer();
         void        initCommand();
         void        execServer();
         int         getServerSocket();
         void        readClientRequest(int i);
         static void sendToClient(int fd, const std::string &content);
         Client 		*getClientByNick(const std::string &nick);
+        Client      *getClientFromFd(int fd);
         void        addChannel(Channel *newChannel);
         Channel     *getChannelByName(const std::string& name);
         std::string getPassword()const;
 		void		updateClient(std::string oldNick, std::string newNick);	
-		bool		isNickUsed(Client *client, std::string nick);	
+		bool		isNickUsed(Client *client, std::string nick);
+
         ~Server();
 
         //typedef pour fonction de command qui prend en arguments le client une ref constante sur la commande et un pointeru sur le serveur
         typedef void (*cmdFct) (Client *client, const Command &cmd, Server *server);
+        //un iterator qui peret de passer 
+        typedef std::map<std::string, cmdFct>::iterator CmdIt;
 
     private:
 

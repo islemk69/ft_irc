@@ -1,4 +1,5 @@
 #include "../includes/Server.hpp"
+#include "../includes/numericReplies.hpp"
 #include <string>
 
 Server::Server(std::string port, std::string password){
@@ -85,7 +86,15 @@ void Server::execServer(){
     
 }
 
-void Server::readClientRequest(int i) {//lis la requete du client 
+Client* Server::getClientFromFd(int fd) {
+    std::map<int, Client*>::iterator it = this->_clients.find(fd);
+    if (it != this->_clients.end()) {
+        return it->second;
+    }
+    return NULL;
+}
+
+void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
     ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
@@ -101,16 +110,26 @@ void Server::readClientRequest(int i) {//lis la requete du client
         this->_fds.erase(this->_fds.begin() + i);
         return ; 
     }
-    std::cout << "Client says: " << buffer << std::endl;
     Server::sendToClient(_fds[i].fd, ERR_NONICKNAMEGIVEN(std::string("Client")));
     //HUGO TU FOUS TON PERSING A PARTIT D'ICI
+
     Command cmd(buffer);
-    std::cout << "ICI" <<std::endl;
+
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
         return ;
     }
-    std::cout << cmd << std::endl;
+    CmdIt it = this->_cmds.find(cmd.command);
+
+    Client* client = getClientFromFd(this->_fds[i].fd);
+    //si on trouve
+    if (it != this->_cmds.end()) {
+        std::cout << "cmd trouvee :" << cmd.command << std::endl;
+        it->second(client, cmd, this);
+    } else {
+        Server::sendToClient(client->fd, "pas trouvee");
+    }
+    //si la commande n'a pas ete trouver 
     //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
 }
 
