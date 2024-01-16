@@ -15,7 +15,7 @@ Server::Server(std::string port, std::string password){
     this->_port = std::atoi(port.c_str());
     if (password.empty())
         throw std::invalid_argument("Password can't be empty");
-    this->_password = password;
+    this->_password = password + '\n';
 }
 
 void Server::initServer(){
@@ -111,11 +111,9 @@ void Server::readClientRequest(int i) {
         this->_fds.erase(this->_fds.begin() + i);
         return ; 
     }
-    Server::sendToClient(_fds[i].fd, ERR_NONICKNAMEGIVEN(std::string("Client")));
     //HUGO TU FOUS TON PERSING A PARTIT D'ICI
 
     Command cmd(buffer);
-
 
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));

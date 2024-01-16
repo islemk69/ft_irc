@@ -22,6 +22,8 @@ void	passCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NEEDMOREPARAMS(client->nick, command.command));
 	else if (command.args.size() == 1 && command.args[0] == server->getPassword())
 		client->hasPass = true;
-	else
+	else{
 		Server::sendToClient(client->fd, ERR_PASSWDMISMATCH(client->nick));
+	}
+
 }

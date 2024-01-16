@@ -20,7 +20,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NORECIPIENT(client->nick, command.command));
 		return ;
 	}
-	std::vector<std::string>	targets = ft_split(command.args[0], ",");
+	std::vector<std::string>	targets = ft_split(command.args[0], ",\n");
 
 	if (targets.size() > TARGETMAX)
 	{

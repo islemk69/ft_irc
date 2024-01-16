@@ -32,6 +32,7 @@ Command::Command(std::string msg) : isValid(true)
     //une fois qu'on a verifier que la commande ne contient que des caracteres alphanumeriques on les mets dans un tableau
 	std::vector<std::string>::iterator itVec;
 	for (itVec = splitCmd.begin(); itVec != splitCmd.end(); itVec++) {
+        std::cout << "itVec : " << *itVec << std::endl;
         std::cout << *itVec << std::endl;
 		this->args.push_back(*itVec);
 	}
@@ -44,7 +45,7 @@ Command::~Command()
 std::ostream &operator<<(std::ostream &os, const Command &c) {
     os << "Command: " << c.command << std::endl;
     os << "Args: ";
-    for (size_t i = 0; i < c.args.size(); ++i) {
+    for (size_t i = 0; i < c.args.size(); i++) {
         os << c.args[i] << " ";
     }
     os << std::endl;
