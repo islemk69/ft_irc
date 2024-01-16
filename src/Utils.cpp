@@ -1,17 +1,24 @@
 #include "../includes/Utils.hpp"
 
 std::vector<std::string> split(const std::string & msg, const std::string & delim) {
-    std::vector<std::string> result;
-    std::string::size_type startPos = 0;
-    std::string::size_type endPos = msg.find_first_of(delim);
-
-    while (endPos != std::string::npos) {
-        result.push_back(msg.substr(startPos, endPos - startPos));
-        startPos = endPos + 1;
-        endPos = msg.find_first_of(delim, startPos);
+    std::vector<std::string> res;
+    std::string token = "";
+    for (int i = 0; i < msg.size(); i++) {
+        bool flag = true;
+        for (int j = 0; j < delim.size(); j++) {
+            if (msg[i + j] != delim[j]) flag = false;
+        }
+        if (flag) {
+            if (token.size() > 0) {
+                res.push_back(token);
+                token = "";
+                i += delim.size() - 1;
+            }
+        } else {
+            token += msg[i];
+        }
     }
-
-    result.push_back(msg.substr(startPos));
-
-    return result;
+    res.push_back(token);
+    std::cout << "split" <<res.size() << std::endl;
+    return (res);
 }

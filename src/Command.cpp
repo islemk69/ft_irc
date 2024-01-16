@@ -1,5 +1,5 @@
 #include "../includes/Command.hpp"
-#include "../includes/utils.hpp"
+#include "../includes/Utils.hpp"
 
 Command::Command()
 {
@@ -11,7 +11,7 @@ Command::Command(std::string msg) : isValid(true)
         this->isValid = false;
         return ;
     }
-    std::vector<std::string> splitCmd = ft_split(msg, ' ');
+    std::vector<std::string> splitCmd = split(msg, " ");
     if (splitCmd.size() == 0) {
         this->isValid = false;
         return ;
