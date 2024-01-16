@@ -111,7 +111,6 @@ void Server::readClientRequest(int i) {
         this->_fds.erase(this->_fds.begin() + i);
         return ; 
     }
-    Server::sendToClient(_fds[i].fd, ERR_NONICKNAMEGIVEN(std::string("Client")));
     //HUGO TU FOUS TON PERSING A PARTIT D'ICI
 
     Command cmd(buffer);
