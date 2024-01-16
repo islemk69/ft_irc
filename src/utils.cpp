@@ -12,21 +12,27 @@
 
 #include "../includes/utils.hpp"
 
-std::vector<std::string>	ft_split(std::string str, char sep)
+std::vector<std::string>	ft_split(const std::string & msg, const std::string & delim)
 {
-	std::size_t					pos;
-	std::string					token;
-	std::vector<std::string>	vec;
-
-	if (str.empty())
-		return vec;
-	while ((pos = str.find(sep)) != std::string::npos)
-	{
-		token = str.substr(0, pos);
-		vec.push_back(token);
-		str.erase(0, pos + 1);
-	}
-	return vec;
+    std::vector<std::string> res;
+    std::string token = "";
+    for (int i = 0; i < msg.size(); i++) {
+        bool flag = true;
+        for (int j = 0; j < delim.size(); j++) {
+            if (msg[i + j] != delim[j]) flag = false;
+        }
+        if (flag) {
+            if (token.size() > 0) {
+                res.push_back(token);
+                token = "";
+                i += delim.size() - 1;
+            }
+        } else {
+            token += msg[i];
+        }
+    }
+    res.push_back(token);
+    return (res);
 }
 
 

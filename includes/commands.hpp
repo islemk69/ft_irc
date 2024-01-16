@@ -14,6 +14,7 @@
 # define COMMANDS_HPP
 
 # include "Server.hpp"
+# include "utils.hpp"
 
 # define TARGETMAX 30
 # define CHANJOINMAX 15
