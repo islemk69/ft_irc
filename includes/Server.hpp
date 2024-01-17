@@ -58,6 +58,9 @@ class Server{
 		void		updateClient(std::string oldNick, std::string newNick);	
 		bool		isNickUsed(Client *client, std::string nick);
 
+        bool        buffContainsEndOfMsg(std::string & msgBuffer) const;
+
+
         ~Server();
 
         //typedef pour fonction de command qui prend en arguments le client une ref constante sur la commande et un pointeru sur le serveur

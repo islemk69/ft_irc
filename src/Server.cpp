@@ -94,26 +94,44 @@ Client* Server::getClientFromFd(int fd) {
     }
     return NULL;
 }
+bool Server::buffContainsEndOfMsg(std::string & msgBuffer) const {
+    if (msgBuffer.find('\n', 0) != std::string::npos)
+    {
+        std::cout << "trouvee" <<std::endl;
+        return true;
+    }
+    if (msgBuffer.find('\r', 0) != std::string::npos)
+    {
+        std::cout << "trouvee" <<std::endl;
+        return true;
+    }
+    return false;
+}
 
 void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
-    ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
-    if (bytesRead == -1) {
-        perror("Error reading client data");
-        close(this->_fds[i].fd);
-        this->_fds.erase(this->_fds.begin() + i);
-        return ;
-    }
-
-    if (bytesRead == 0) {
-        close(this->_fds[i].fd);
-        this->_fds.erase(this->_fds.begin() + i);
-        return ; 
+    ssize_t bytesRead;
+    static std::string msgBuffer;
+    
+    while (! buffContainsEndOfMsg(msgBuffer)) {
+        bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
+        if (bytesRead == -1) {
+            perror("Error reading client data");
+            close(this->_fds[i].fd);
+            this->_fds.erase(this->_fds.begin() + i);
+            return ;
+        }
+        if (bytesRead == 0) {
+            close(this->_fds[i].fd);
+            this->_fds.erase(this->_fds.begin() + i);
+            return ; 
+        }
+        msgBuffer += buffer;
     }
     //HUGO TU FOUS TON PERSING A PARTIT D'ICI
 
-    Command cmd(buffer);
+    Command cmd(msgBuffer);
 
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
