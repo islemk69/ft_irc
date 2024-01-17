@@ -95,43 +95,40 @@ Client* Server::getClientFromFd(int fd) {
     return NULL;
 }
 bool Server::buffContainsEndOfMsg(std::string & msgBuffer) const {
-    if (msgBuffer.find('\n', 0) != std::string::npos)
-    {
-        std::cout << "trouvee" <<std::endl;
-        return true;
-    }
-    if (msgBuffer.find('\r', 0) != std::string::npos)
-    {
-        std::cout << "trouvee" <<std::endl;
-        return true;
-    }
-    return false;
+    size_t terminator = msgBuffer.find("\r\n", 0);
+    if (terminator == std::string::npos)
+        return false;
+    return true;
 }
 
-void Server::readClientRequest(int i) {
+void Server::readFromFd(std::string & msgBuffer, int i) {
     char buffer[1024];
-    memset(buffer, 0, sizeof(buffer));
-    ssize_t bytesRead;
-    static std::string msgBuffer;
+    int bytesRead = 0;
     
-    while (! buffContainsEndOfMsg(msgBuffer)) {
-        bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
-        if (bytesRead == -1) {
-            perror("Error reading client data");
-            close(this->_fds[i].fd);
-            this->_fds.erase(this->_fds.begin() + i);
-            return ;
-        }
-        if (bytesRead == 0) {
-            close(this->_fds[i].fd);
-            this->_fds.erase(this->_fds.begin() + i);
-            return ; 
-        }
-        msgBuffer += buffer;
+    bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
+    if (bytesRead == -1) {		
+        if	( errno == EWOULDBLOCK || errno == EAGAIN )
+		{
+			throw NothingToReadAnymoreException();
+		}
+		else
+		{
+			sendToClient(this->_fds[i].fd, "Application: Connection issue while receiving message from socket");
+			throw DisconnectClientException();
+		}
     }
-    //HUGO TU FOUS TON PERSING A PARTIT D'ICI
+    if (bytesRead == 0) {
+        close(this->_fds[i].fd);
+        this->_fds.erase(this->_fds.begin() + i);
+        throw DisconnectClientException(); 
+    }
+    msgBuffer += buffer;
+    std::cout << msgBuffer << std::endl;
+}
 
+void Server::executeCommand(std::string & msgBuffer, int i) {
     Command cmd(msgBuffer);
+    std::cout << "msbuff : " << msgBuffer << std::endl;
 
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
@@ -149,6 +146,29 @@ void Server::readClientRequest(int i) {
     } else {
         Server::sendToClient(client->fd, "pas trouvee");
     }
+    msgBuffer = "";
+}
+
+void Server::readFromClient(std::string & msgBuffer, int i) {
+    while (! buffContainsEndOfMsg(msgBuffer)) {
+        try {
+            readFromFd(msgBuffer, i);
+            executeCommand(msgBuffer, i);
+        } catch (Server::NothingToReadAnymoreException & e) {
+            break ;
+        } catch (Server::DisconnectClientException & e) {
+            break ;
+        }
+    }
+}
+
+void Server::readClientRequest(int i) {
+    char buffer[1024];
+    memset(buffer, 0, sizeof(buffer));
+    ssize_t bytesRead;
+    static std::string msgBuffer;
+    
+    readFromClient(msgBuffer, i);
     //si la commande n'a pas ete trouver 
     //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
 }

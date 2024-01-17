@@ -59,7 +59,15 @@ class Server{
 		bool		isNickUsed(Client *client, std::string nick);
 
         bool        buffContainsEndOfMsg(std::string & msgBuffer) const;
+        void        readFromFd(std::string & msgBuffer, int fd);
+        void        readFromClient(std::string & msgBuffer, int i);
 
+        void        executeCommand(std::string & msgBuffer, int i);
+
+        //une exception pour qd il n'y a plus r a lire
+        //pas besoin de declarer la fonction what si cest pour un signal par exemple
+        class NothingToReadAnymoreException : public std::exception {};
+        class DisconnectClientException : public std::exception {};
 
         ~Server();
 
