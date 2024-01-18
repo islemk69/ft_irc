@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 16:35:50 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:50:43 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,16 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 	{
 		if (it->find("#") == 0)
 		{
-			std::string	chanName = *it;
-			chanName.erase(0, 1);
-			Channel		*channel = server->getChannelByName(chanName);
+			Channel		*channel = server->getChannelByName(*it);
 			if (!channel)
 			{
-				Server::sendToClient(client->fd, ERR_NOSUCHNICK(client->nick, chanName));
+				Server::sendToClient(client->fd, ERR_NOSUCHNICK(client->nick, *it));
 				continue ;
 			}
-			channel = client->getChannelByName(chanName);
+			channel = client->getChannelByName(*it);
 			if (!channel)
 			{
-				Server::sendToClient(client->fd, ERR_CANNOTSENDTOCHAN(client->nick, chanName));
+				Server::sendToClient(client->fd, ERR_CANNOTSENDTOCHAN(client->nick, *it));
 				continue ;
 			}
 			if (command.args.size() < 2 || command.args[1].empty())
@@ -51,7 +49,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 				return ;
 			}
 			channel->sendToAllButClient(client->fd, RPL_CMD(client->nick, client->user, \
-				"PRIVMSG " + chanName, command.args[1]));
+				"PRIVMSG " + *it, command.args[1]));
 		}
 		else
 		{
