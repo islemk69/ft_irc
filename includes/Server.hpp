@@ -67,11 +67,6 @@ class Server{
         //un iterator qui peret de passer 
         typedef std::map<std::string, cmdFct>::iterator CmdIt;
 
-
-        bool    bufferContainsEndOfMessage(std::string & msgBuffer) const ;
-        void    readFromSocket(std::string & msgBuffer, int fd);
-
-
     private:
 
         unsigned int                    _port;

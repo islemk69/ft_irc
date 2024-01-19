@@ -95,6 +95,11 @@ Client* Server::getClientFromFd(int fd) {
     return NULL;
 }
 
+// void Server::hexchatCmd(Command cmd) {
+//     //recupe de la commande venant de haxchat 
+// }
+
+
 void Server::hexchatCheck(Client* client, std::string msg) {
     if (msg.empty() || msg[0] == ' ') {
         return ;
@@ -145,15 +150,7 @@ void Server::hexchatCheck(Client* client, std::string msg) {
     }
 }
 
-bool Server::bufferContainsEndOfMessage(std::string & msgBuffer) const {
-    size_t terminator = msgBuffer.find("\r\n", 0);
-    if (terminator == std::string::npos)
-        return false;
-    return true;
-}
-
-//fonction qui va enregistrer le 
-void Server::readFromSocket(std::string & msgBuffer, int i) {
+void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
     ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
@@ -163,27 +160,18 @@ void Server::readFromSocket(std::string & msgBuffer, int i) {
         this->_fds.erase(this->_fds.begin() + i);
         return ;
     }
+
     if (bytesRead == 0) {
         close(this->_fds[i].fd);
         this->_fds.erase(this->_fds.begin() + i);
         return ; 
     }
-    msgBuffer += buffer;
-}
+    //HUGO TU FOUS TON PERSING A PARTIT D'ICI
 
-void
-
-void Server::readClientRequest(int i) {
-    static std::string msgBuffer;
-
-    try {
-
-    } catch
     //hexchatici
 
     Client* client = getClientFromFd(this->_fds[i].fd);
 
-    //fuck off de ca faut sen debarasser
     hexchatCheck(client, buffer);
 
     Command cmd(buffer);
@@ -200,6 +188,8 @@ void Server::readClientRequest(int i) {
     } else {
         Server::sendToClient(client->fd, "pas trouvee");
     }
+    //si la commande n'a pas ete trouver 
+    //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
 }
 
 void Server::sendToClient(int fd, const std::string &content) {
