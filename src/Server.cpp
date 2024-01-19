@@ -95,6 +95,58 @@ Client* Server::getClientFromFd(int fd) {
     return NULL;
 }
 
+// void Server::hexchatCmd(Command cmd) {
+//     //recupe de la commande venant de haxchat 
+// }
+
+
+void Server::hexchatCheck(Client* client, std::string msg) {
+    if (msg.empty() || msg[0] == ' ') {
+        return ;
+    }
+    std::vector<std::string> splitCmd = ft_split(msg, " ");
+
+    if (splitCmd.size() == 0) {
+        return ;
+    }
+    std::vector<std::string>::iterator hexchatIt = splitCmd.begin();
+
+    CmdIt cmdIt;
+
+    for (; hexchatIt != splitCmd.end(); hexchatIt++) {
+        if (*hexchatIt == "LS") {
+            //le vector  suivant ets le code du protocole ===>> on sen tape
+            std::cout << "hexchat vetrou" << std::endl;
+            hexchatIt ++; // Skip the next string in the vector
+            hexchatIt ++;
+            while (hexchatIt != splitCmd.end() && Command::isAllCaps(*hexchatIt))
+            {
+                Command cmd; 
+                std::cout << *hexchatIt << std::endl;
+                cmd.command = *hexchatIt;
+                hexchatIt++;
+                cmd.args.push_back(*hexchatIt);
+
+                cmdIt = this->_cmds.find(cmd.command);
+                if (cmdIt != this->_cmds.end()) {
+                    if (cmd.command == "USER") {
+                        std::cout << "USER trouvvvevevevevev\n" << std::endl;
+                        hexchatIt++;
+                        for (int i = 0; i < 4; i++){
+                            cmd.args.push_back(*hexchatIt);
+                            hexchatIt++;
+                        }
+                        cmdIt->second(client, cmd, this);
+                        return ;
+                    }
+                    cmdIt->second(client, cmd, this);
+                }
+                hexchatIt++;
+            }
+        }
+    }
+}
+
 void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
@@ -113,8 +165,13 @@ void Server::readClientRequest(int i) {
     }
     //HUGO TU FOUS TON PERSING A PARTIT D'ICI
 
-    Command cmd(buffer);
+    //hexchatici
 
+    Client* client = getClientFromFd(this->_fds[i].fd);
+
+    hexchatCheck(client, buffer);
+
+    Command cmd(buffer);
 
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
@@ -122,12 +179,8 @@ void Server::readClientRequest(int i) {
     }
     CmdIt it = this->_cmds.find(cmd.command);
 
-    Client* client = getClientFromFd(this->_fds[i].fd);
     //si on trouve
     if (it != this->_cmds.end()) {
-        std::cout << "cmd trouvee :" << cmd.command << std::endl;
-        std::cout << cmd << std::endl;
-
         it->second(client, cmd, this);
     } else {
         Server::sendToClient(client->fd, "pas trouvee");
@@ -197,5 +250,6 @@ std::string Server::getPassword()const{
 }
 
 int Server::getServerSocket(){return this->_serverSocket;}
+
 
 Server::~Server(){}

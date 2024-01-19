@@ -57,6 +57,8 @@ class Server{
         std::string getPassword()const;
 		void		updateClient(std::string oldNick, std::string newNick);	
 		bool		isNickUsed(Client *client, std::string nick);
+        void        hexchatCheck(Client* client, std::string msg);
+
 
         ~Server();
 

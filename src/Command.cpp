@@ -1,8 +1,18 @@
 #include "../includes/Command.hpp"
 #include "../includes/utils.hpp"
+#include "../includes/Server.hpp"
 
 Command::Command()
 {
+}
+
+bool Command::isAllCaps(const std::string& str) {
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
+        if (!std::isupper(*it)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 Command::Command(std::string msg) : isValid(true)
@@ -18,23 +28,23 @@ Command::Command(std::string msg) : isValid(true)
     }
 
     this->command = splitCmd[0];
-	splitCmd.erase(splitCmd.begin());//erase the first element
+    splitCmd.erase(splitCmd.begin()); //erase the first element
     //iterate over the string 
-	std::string::iterator it;
-	for (it = this->command.begin(); it != this->command.end(); it++) {
-		if (!std::isalnum(*it)) {
-			this->isValid = false;
-			return ;
-		}
-		*it = toupper(*it);
-	}
+    std::string::iterator it;
+    for (it = this->command.begin(); it != this->command.end(); it++) {
+        if (!std::isalnum(*it)) {
+            this->isValid = false;
+            return ;
+        }
+        *it = toupper(*it);
+    }
 
     //une fois qu'on a verifier que la commande ne contient que des caracteres alphanumeriques on les mets dans un tableau
-	std::vector<std::string>::iterator itVec;
-	for (itVec = splitCmd.begin(); itVec != splitCmd.end(); itVec++) {
+    std::vector<std::string>::iterator itVec;
+    for (itVec = splitCmd.begin(); itVec != splitCmd.end(); itVec++) {
         std::cout << *itVec << std::endl;
-		this->args.push_back(*itVec);
-	}
+        this->args.push_back(*itVec);
+    }
 }
 
 Command::~Command()
@@ -48,5 +58,5 @@ std::ostream &operator<<(std::ostream &os, const Command &c) {
         os << c.args[i] << " ";
     }
     os << std::endl;
-	return os;
+    return os;
 }

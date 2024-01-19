@@ -12,6 +12,9 @@ class Command
 		bool isValid;
 		std::string command;
 		std::vector<std::string> args;
+
+		static bool isAllCaps(const std::string& str) ;
+
 };
 
 std::ostream &operator<<(std::ostream &os, const Command &c);

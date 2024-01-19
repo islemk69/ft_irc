@@ -18,7 +18,7 @@ SRCS =	src/main.cpp \
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
-FLAGS =  -std=c++98 -MMD -MP
+FLAGS =  -std=c++98 -MMD -MP -g3
 NAME = ircserv
 HEAD = 	includes/Server.hpp \
 		includes/Client.hpp \
