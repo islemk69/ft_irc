@@ -176,23 +176,37 @@ void Server::readCommandFromFd(Client *client, int i) {
         throw DisconnectClientException();
     }
     client->msgBuffer += std::string(buffer);
-    std::cout << "msgbuff accu : " << client->msgBuffer << std::endl;
 }
 
 void Server::executeCmd(Client * client, int i) {
-    Command cmd(client->msgBuffer);
+    size_t terminator = client->msgBuffer.find("\r\n", 0);
 
-    if (!cmd.isValid) {
-        Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
-        return ;
-    }
-    CmdIt it = this->_cmds.find(cmd.command);
+    //si on ne trouve pas le terminator on arrete ici
+    if (terminator == std::string::npos)
+        return;
 
-    //si on trouve
-    if (it != this->_cmds.end()) {
-        it->second(client, cmd, this);
-    } else {
-        Server::sendToClient(client->fd, "pas trouvee");
+    size_t pos = 0;
+    //sinon tant que le terminator n'est aps trouvé
+    while (terminator != std::string::npos) {
+        //on recupere la partie du message en coupant a partir de pos (0 pour le premier coup) jusqua terminator
+        std::string cmdBuffer = client->msgBuffer.substr(pos, terminator + 2 - pos);
+        Command cmd(cmdBuffer);
+
+        if (!cmd.isValid) {
+            Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
+            return ;
+        }
+        CmdIt it = this->_cmds.find(cmd.command);
+
+        //si on trouve
+        if (it != this->_cmds.end()) {
+            it->second(client, cmd, this);
+        } else {
+            Server::sendToClient(client->fd, "pas trouvee");
+        }
+        
+        pos = terminator + 2;
+        terminator = client->msgBuffer.find("\r\n", pos);
     }
     client->msgBuffer = "";
 }
