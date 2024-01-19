@@ -125,16 +125,18 @@ void Server::hexchatCheck(Client* client, std::string msg) {
                 std::cout << *hexchatIt << std::endl;
                 cmd.command = *hexchatIt;
                 hexchatIt++;
+                if (hexchatIt == splitCmd.end()) break;
                 cmd.args.push_back(*hexchatIt);
 
                 cmdIt = this->_cmds.find(cmd.command);
                 if (cmdIt != this->_cmds.end()) {
                     if (cmd.command == "USER") {
-                        std::cout << "USER trouvvvevevevevev\n" << std::endl;
                         hexchatIt++;
+                        if (hexchatIt == splitCmd.end()) break;
                         for (int i = 0; i < 4; i++){
                             cmd.args.push_back(*hexchatIt);
                             hexchatIt++;
+                            if (hexchatIt == splitCmd.end()) break;
                         }
                         cmdIt->second(client, cmd, this);
                         return ;
@@ -142,6 +144,7 @@ void Server::hexchatCheck(Client* client, std::string msg) {
                     cmdIt->second(client, cmd, this);
                 }
                 hexchatIt++;
+                if (hexchatIt == splitCmd.end()) break;
             }
         }
     }
