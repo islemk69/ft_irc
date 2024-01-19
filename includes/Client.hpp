@@ -31,6 +31,7 @@ class Client {
         void        leaveChannel(Channel *channel, std::string cause);
         int         chansJoined();
 		std::map<std::string, Channel*> getChannels()const;
+        std::string msgBuffer;
 };
 
 #endif

@@ -67,6 +67,14 @@ class Server{
         //un iterator qui peret de passer 
         typedef std::map<std::string, cmdFct>::iterator CmdIt;
 
+        bool commandContainsEndOfMsg(std::string & msgBuffer) const;
+        void readCommandFromFd(Client * client, int i);
+        void executeCmd(Client * client, int i);
+
+
+        class NothingMoreToReadException : public std::exception {};
+		class DisconnectClientException : public std::exception {};
+
     private:
 
         unsigned int                    _port;

@@ -150,31 +150,37 @@ void Server::hexchatCheck(Client* client, std::string msg) {
     }
 }
 
-void Server::readClientRequest(int i) {
+bool Server::commandContainsEndOfMsg(std::string & msgBuffer) const {
+    size_t terminator = msgBuffer.find("\r\n", 0);
+    if (terminator == std::string::npos)
+        return (false);
+    return (true);
+}
+
+void Server::readCommandFromFd(Client *client, int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
-    ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
+    ssize_t bytesRead = recv(client->fd, buffer, sizeof(buffer), 0);
     if (bytesRead == -1) {
         perror("Error reading client data");
-        close(this->_fds[i].fd);
+        close(client->fd);
         this->_fds.erase(this->_fds.begin() + i);
-        return ;
+        if ( errno == EWOULDBLOCK || errno == EAGAIN )
+            throw NothingMoreToReadException();
+        else
+            throw DisconnectClientException();
     }
-
     if (bytesRead == 0) {
         close(this->_fds[i].fd);
         this->_fds.erase(this->_fds.begin() + i);
-        return ; 
+        throw DisconnectClientException();
     }
-    //HUGO TU FOUS TON PERSING A PARTIT D'ICI
+    client->msgBuffer += std::string(buffer);
+    std::cout << "msgbuff accu : " << client->msgBuffer << std::endl;
+}
 
-    //hexchatici
-
-    Client* client = getClientFromFd(this->_fds[i].fd);
-
-    hexchatCheck(client, buffer);
-
-    Command cmd(buffer);
+void Server::executeCmd(Client * client, int i) {
+    Command cmd(client->msgBuffer);
 
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
@@ -187,6 +193,23 @@ void Server::readClientRequest(int i) {
         it->second(client, cmd, this);
     } else {
         Server::sendToClient(client->fd, "pas trouvee");
+    }
+    client->msgBuffer = "";
+}
+
+void Server::readClientRequest(int i) {
+    Client* client = getClientFromFd(this->_fds[i].fd);
+    try {
+        while (!commandContainsEndOfMsg(client->msgBuffer)) {
+            try {
+                readCommandFromFd(client, i);
+                executeCmd(client, i);
+            } catch (NothingMoreToReadException & e) {
+                break ;
+            }
+        }
+    } catch (DisconnectClientException & e) {
+        client->msgBuffer = "";
     }
     //si la commande n'a pas ete trouver 
     //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
