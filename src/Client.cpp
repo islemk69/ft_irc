@@ -3,6 +3,7 @@
 Client::Client(int fd){
     this->fd = fd;
     this->isRegistered = false;
+	this->hasPass = false;
 }
 
 Channel *Client::getChannelByName(const std::string& name) {
