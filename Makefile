@@ -13,7 +13,8 @@ SRCS =	src/main.cpp \
 		src/commands/pass.cpp \
 		src/commands/privmsg.cpp \
 		src/commands/topic.cpp \
-		src/commands/user.cpp
+		src/commands/user.cpp \
+		src/commands/who.cpp
 
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))

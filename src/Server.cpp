@@ -58,6 +58,7 @@ void Server::initCommand(){
     this->_cmds["PRIVMSG"] = &privmsgCmd;
     this->_cmds["TOPIC"] = &topicCmd;
     this->_cmds["USER"] = &userCmd;
+    this->_cmds["WHO"] = &whoCmd;
 }
 
 int iter = 0; //DEBUG
