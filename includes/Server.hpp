@@ -67,10 +67,8 @@ class Server{
 
         bool commandContainsEndOfMsg(std::string & msgBuffer) const;
         void readCommandFromFd(Client * client, int i);
-        void executeCmd(Client * client, int i);
-        void waitForSocketEvent(void);
-        void connectNewClient(void);
-        void readClientSocket(void);
+        void executeCmd(Client * client, std::string & msgBuffer, int i);
+        
 
 
         class NothingMoreToReadException : public std::exception {};

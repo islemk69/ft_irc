@@ -1,6 +1,5 @@
 #include "../includes/Server.hpp"
 #include "../includes/numericReplies.hpp"
-#include "../includes/signal.hpp"
 #include <string>
 
 Server::Server(std::string port, std::string password){
@@ -24,20 +23,14 @@ void Server::initServer(){
     if (this->_serverSocket == -1) { 
         throw std::runtime_error("Error while creating socket");
     }
-    //int option = 1;
-    //setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
-
-    //il faut mettre la socket du serveur a non blocking
-
-    int flags = fcntl(this->_serverSocket, F_GETFL, 0);
-    fcntl(this->_serverSocket, F_SETFL, flags | O_NONBLOCK);
-
-    ///////////////////////////////////////////////////////////
-
+    
+    int option = 1;
+    if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) == -1)
+        std::cout << "Error making socket reusable" << std::endl;
     sockaddr_in serverAddress;
     memset(&serverAddress, 0, sizeof(serverAddress)); 
     serverAddress.sin_family = AF_INET; 
-    serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
     serverAddress.sin_port = htons(this->_port); 
 
     if (bind(this->_serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
@@ -49,12 +42,12 @@ void Server::initServer(){
         close(this->_serverSocket);
         throw std::runtime_error("Error in listen");
     }
+
     
     this->_fds.push_back(pollfd()); 
     this->_fds[0].fd = this->_serverSocket;
     this->_fds[0].events = POLLIN;
     this->initCommand();
-	signal( SIGINT, sig::signalHandler );
 }
 
 void Server::initCommand(){
@@ -71,53 +64,29 @@ void Server::initCommand(){
 
 int iter = 0; //DEBUG
 
-void Server::waitForSocketEvent(void) {
-    int numReady = poll(this->_fds.data(), this->_fds.size(), -1);
-    if (numReady == -1 && sig::stopServer == true)
-        throw StopServerException();
-    else if (numReady == -1 && sig::stopServer == true)
+void Server::execServer(){
+    if (poll(&this->_fds[0], this->_fds.size(), -1) == -1) { 
         throw std::runtime_error("Error in poll");
-}
+    } 
 
-void Server::connectNewClient(void) {
     if (this->_fds[0].revents & POLLIN) { 
-        int fdClient = accept(this->_serverSocket, NULL, NULL);
-
-        int flags = fcntl( fdClient, F_GETFL, 0 );
-        fcntl( fdClient, F_SETFL, flags | O_NONBLOCK );
-
+        int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
             Client* newClient = new Client(fdClient);
-
             std::cout << "Client n " << iter << ", fd ----> " << newClient->fd << std::endl; // DEBUG
             iter++; //DEBUG
             this->_clients[fdClient] = newClient;
-            this->_fds.push_back(pollfd());
+            this->_fds.push_back(pollfd()); 
             this->_fds.back().fd = fdClient; 
-            this->_fds.back().events = POLLIN | POLLOUT; 
+            this->_fds.back().events = POLLIN; 
         }
     }
-    return ;
-}
-
-void Server::readClientSocket(void) {
-    for (size_t i = 1; i < this->_fds.size() && sig::stopServer == false; ++i) {
+    for (size_t i = 1; i < this->_fds.size(); ++i) {
         if (this->_fds[i].revents & POLLIN) {
-            readClientRequest(i);
+            this->readClientRequest(i);
         }
     }
-}  
-
-void Server::execServer(void) {
-    while (sig::stopServer == false) {
-        try {
-                waitForSocketEvent();
-                connectNewClient();
-                readClientSocket();
-        } catch (StopServerException & e) {
-            break ;
-        }
-    }
+    
 }
 
 Client* Server::getClientFromFd(int fd) {
@@ -128,37 +97,8 @@ Client* Server::getClientFromFd(int fd) {
     return NULL;
 }
 
-bool Server::commandContainsEndOfMsg(std::string & msgBuffer) const {
+void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
     size_t terminator = msgBuffer.find("\r\n", 0);
-    if (terminator == std::string::npos)
-        return (false);
-    return (true);
-}
-
-void Server::readCommandFromFd(Client *client, int i) {
-    char buffer[1024];
-    memset(buffer, 0, sizeof(buffer));
-    ssize_t bytesRead = recv(client->fd, buffer, sizeof(buffer), 0);
-    if (bytesRead == -1) {
-        perror("Error reading client data");
-        close(client->fd);
-        this->_fds.erase(this->_fds.begin() + i);
-        if ( errno == EWOULDBLOCK || errno == EAGAIN )
-            throw NothingMoreToReadException();
-        else
-            throw DisconnectClientException();
-    }
-    if (bytesRead == 0) {
-        close(this->_fds[i].fd);
-        this->_fds.erase(this->_fds.begin() + i);
-        throw DisconnectClientException();
-    }
-    client->msgBuffer += std::string(buffer);
-    std::cout << client->msgBuffer << std::endl;
-}
-
-void Server::executeCmd(Client * client, int i) {
-    size_t terminator = client->msgBuffer.find("\r\n", 0);
 
     //si on ne trouve pas le terminator on arrete ici
     if (terminator == std::string::npos)
@@ -168,7 +108,7 @@ void Server::executeCmd(Client * client, int i) {
     //sinon tant que le terminator n'est aps trouvé
     while (terminator != std::string::npos) {
         //on recupere la partie du message en coupant a partir de pos (0 pour le premier coup) jusqua terminator
-        std::string cmdBuffer = client->msgBuffer.substr(pos, terminator + 2 - pos);
+        std::string cmdBuffer = msgBuffer.substr(pos, terminator + 2 - pos);
         Command cmd(cmdBuffer);
 
         if (!cmd.isValid) {
@@ -185,27 +125,41 @@ void Server::executeCmd(Client * client, int i) {
         }
         
         pos = terminator + 2;
-        terminator = client->msgBuffer.find("\r\n", pos);
+        terminator = msgBuffer.find("\r\n", pos);
     }
-    client->msgBuffer = "";
+    msgBuffer = "";
 }
 
 void Server::readClientRequest(int i) {
-    Client* client = getClientFromFd(this->_fds[i].fd);
-    try {
-        while (!commandContainsEndOfMsg(client->msgBuffer)) {
-            try {
-                readCommandFromFd(client, i);
-                executeCmd(client, i);
-            } catch (NothingMoreToReadException & e) {
-                break ;
-            }
+    char buffer[1024];
+    memset(buffer, 0, sizeof(buffer));
+	std::string accumulatedData;
+	std::cout << "hola" << std::endl;
+	while (accumulatedData.find("\r\n") == std::string::npos) {
+        ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
+        if (bytesRead == -1) {
+            perror("Error reading client data");
+            close(this->_fds[i].fd);
+            this->_fds.erase(this->_fds.begin() + i);
+            return;
         }
-    } catch (DisconnectClientException & e) {
-        client->msgBuffer = "";
+
+        if (bytesRead == 0) {
+            close(this->_fds[i].fd);
+            this->_fds.erase(this->_fds.begin() + i);
+            return;
+        }
+
+        accumulatedData += std::string(buffer, bytesRead);
     }
-    //si la commande n'a pas ete trouvée
-    //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
+
+	std::cout << accumulatedData << std::endl;
+
+    Client* client = getClientFromFd(this->_fds[i].fd);
+
+    executeCmd(client, accumulatedData, i);
+
+	// exit(0);
 }
 
 void Server::sendToClient(int fd, const std::string &content) {
@@ -219,15 +173,6 @@ void Server::sendToClient(int fd, const std::string &content) {
         bytesSent += len;
     }
 }
-
-// Client *Server::getClientByName(const std::string &name) {
-// 	for (clientIt it = this->_clients.begin(); it != this->_clients.end(); it++) {
-// 		if (Utils::copyToUpper(name) == Utils::copyToUpper(it->second->nickName)) {
-// 			return it->second;
-// 		}
-// 	}
-// 	return NULL;
-// }
 
 Channel *Server::getChannelByName(const std::string& name) {
 	for (std::map<std::string, Channel*>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++) {
