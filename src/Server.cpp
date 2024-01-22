@@ -1,5 +1,6 @@
 #include "../includes/Server.hpp"
 #include "../includes/numericReplies.hpp"
+#include "../includes/signal.hpp"
 #include <string>
 
 Server::Server(std::string port, std::string password){
@@ -23,12 +24,20 @@ void Server::initServer(){
     if (this->_serverSocket == -1) { 
         throw std::runtime_error("Error while creating socket");
     }
-    int option = 1;
-    setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+    //int option = 1;
+    //setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+
+    //il faut mettre la socket du serveur a non blocking
+
+    int flags = fcntl(this->_serverSocket, F_GETFL, 0);
+    fcntl(this->_serverSocket, F_SETFL, flags | O_NONBLOCK);
+
+    ///////////////////////////////////////////////////////////
+
     sockaddr_in serverAddress;
     memset(&serverAddress, 0, sizeof(serverAddress)); 
     serverAddress.sin_family = AF_INET; 
-    serverAddress.sin_addr.s_addr = INADDR_ANY;
+    serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddress.sin_port = htons(this->_port); 
 
     if (bind(this->_serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
@@ -40,12 +49,12 @@ void Server::initServer(){
         close(this->_serverSocket);
         throw std::runtime_error("Error in listen");
     }
-
     
     this->_fds.push_back(pollfd()); 
     this->_fds[0].fd = this->_serverSocket;
     this->_fds[0].events = POLLIN;
     this->initCommand();
+	signal( SIGINT, sig::signalHandler );
 }
 
 void Server::initCommand(){
@@ -62,29 +71,53 @@ void Server::initCommand(){
 
 int iter = 0; //DEBUG
 
-void Server::execServer(){
-    if (poll(&this->_fds[0], this->_fds.size(), -1) == -1) { 
+void Server::waitForSocketEvent(void) {
+    int numReady = poll(this->_fds.data(), this->_fds.size(), -1);
+    if (numReady == -1 && sig::stopServer == true)
+        throw StopServerException();
+    else if (numReady == -1 && sig::stopServer == true)
         throw std::runtime_error("Error in poll");
-    } 
+}
 
+void Server::connectNewClient(void) {
     if (this->_fds[0].revents & POLLIN) { 
-        int fdClient = accept(this->_serverSocket, NULL, NULL); 
+        int fdClient = accept(this->_serverSocket, NULL, NULL);
+
+        int flags = fcntl( fdClient, F_GETFL, 0 );
+        fcntl( fdClient, F_SETFL, flags | O_NONBLOCK );
+
         if (fdClient != -1) { 
             Client* newClient = new Client(fdClient);
+
             std::cout << "Client n " << iter << ", fd ----> " << newClient->fd << std::endl; // DEBUG
             iter++; //DEBUG
             this->_clients[fdClient] = newClient;
-            this->_fds.push_back(pollfd()); 
+            this->_fds.push_back(pollfd());
             this->_fds.back().fd = fdClient; 
-            this->_fds.back().events = POLLIN; 
+            this->_fds.back().events = POLLIN | POLLOUT; 
         }
     }
-    for (size_t i = 1; i < this->_fds.size(); ++i) {
+    return ;
+}
+
+void Server::readClientSocket(void) {
+    for (size_t i = 1; i < this->_fds.size() && sig::stopServer == false; ++i) {
         if (this->_fds[i].revents & POLLIN) {
-            this->readClientRequest(i);
+            readClientRequest(i);
         }
     }
-    
+}  
+
+void Server::execServer(void) {
+    while (sig::stopServer == false) {
+        try {
+                waitForSocketEvent();
+                connectNewClient();
+                readClientSocket();
+        } catch (StopServerException & e) {
+            break ;
+        }
+    }
 }
 
 Client* Server::getClientFromFd(int fd) {
@@ -93,61 +126,6 @@ Client* Server::getClientFromFd(int fd) {
         return it->second;
     }
     return NULL;
-}
-
-// void Server::hexchatCmd(Command cmd) {
-//     //recupe de la commande venant de haxchat 
-// }
-
-
-void Server::hexchatCheck(Client* client, std::string msg) {
-    if (msg.empty() || msg[0] == ' ') {
-        return ;
-    }
-    std::vector<std::string> splitCmd = ft_split(msg, " ");
-
-    if (splitCmd.size() == 0) {
-        return ;
-    }
-    std::vector<std::string>::iterator hexchatIt = splitCmd.begin();
-
-    CmdIt cmdIt;
-
-    for (; hexchatIt != splitCmd.end(); hexchatIt++) {
-        if (*hexchatIt == "LS") {
-            //le vector  suivant ets le code du protocole ===>> on sen tape
-            std::cout << "hexchat vetrou" << std::endl;
-            hexchatIt ++; // Skip the next string in the vector
-            hexchatIt ++;
-            while (hexchatIt != splitCmd.end() && Command::isAllCaps(*hexchatIt))
-            {
-                Command cmd; 
-                std::cout << *hexchatIt << std::endl;
-                cmd.command = *hexchatIt;
-                hexchatIt++;
-                if (hexchatIt == splitCmd.end()) break;
-                cmd.args.push_back(*hexchatIt);
-
-                cmdIt = this->_cmds.find(cmd.command);
-                if (cmdIt != this->_cmds.end()) {
-                    if (cmd.command == "USER") {
-                        hexchatIt++;
-                        if (hexchatIt == splitCmd.end()) break;
-                        for (int i = 0; i < 4; i++){
-                            cmd.args.push_back(*hexchatIt);
-                            hexchatIt++;
-                            if (hexchatIt == splitCmd.end()) break;
-                        }
-                        cmdIt->second(client, cmd, this);
-                        return ;
-                    }
-                    cmdIt->second(client, cmd, this);
-                }
-                hexchatIt++;
-                if (hexchatIt == splitCmd.end()) break;
-            }
-        }
-    }
 }
 
 bool Server::commandContainsEndOfMsg(std::string & msgBuffer) const {
@@ -176,6 +154,7 @@ void Server::readCommandFromFd(Client *client, int i) {
         throw DisconnectClientException();
     }
     client->msgBuffer += std::string(buffer);
+    std::cout << client->msgBuffer << std::endl;
 }
 
 void Server::executeCmd(Client * client, int i) {
@@ -225,7 +204,7 @@ void Server::readClientRequest(int i) {
     } catch (DisconnectClientException & e) {
         client->msgBuffer = "";
     }
-    //si la commande n'a pas ete trouver 
+    //si la commande n'a pas ete trouvée
     //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
 }
 

@@ -13,7 +13,8 @@ SRCS =	src/main.cpp \
 		src/commands/pass.cpp \
 		src/commands/privmsg.cpp \
 		src/commands/topic.cpp \
-		src/commands/user.cpp
+		src/commands/user.cpp \
+		src/signal.cpp
 
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
@@ -26,7 +27,8 @@ HEAD = 	includes/Server.hpp \
 		includes/utils.hpp \
 		includes/numericReplies.hpp	\
 		includes/commands.hpp \
-		includes/Command.hpp
+		includes/Command.hpp \
+		includes/signal.hpp
 RM = rm -f
 
 GREEN = \033[0;32m

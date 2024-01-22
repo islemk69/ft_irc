@@ -22,6 +22,8 @@
 #include "Channel.hpp"
 #include "numericReplies.hpp"
 #include "utils.hpp"
+#include <fcntl.h>
+
 
 
 
@@ -56,11 +58,7 @@ class Server{
         Channel     *getChannelByName(const std::string& name);
         std::string getPassword()const;
 		void		updateClient(std::string oldNick, std::string newNick);	
-		bool		isNickUsed(Client *client, std::string nick);
-        void        hexchatCheck(Client* client, std::string msg);
-
-
-        ~Server();
+		bool		isNickUsed(Client *client, std::string nick);        ~Server();
 
         //typedef pour fonction de command qui prend en arguments le client une ref constante sur la commande et un pointeru sur le serveur
         typedef void (*cmdFct) (Client *client, const Command &cmd, Server *server);
@@ -70,10 +68,14 @@ class Server{
         bool commandContainsEndOfMsg(std::string & msgBuffer) const;
         void readCommandFromFd(Client * client, int i);
         void executeCmd(Client * client, int i);
+        void waitForSocketEvent(void);
+        void connectNewClient(void);
+        void readClientSocket(void);
 
 
         class NothingMoreToReadException : public std::exception {};
 		class DisconnectClientException : public std::exception {};
+		class StopServerException : public std::exception {};
 
     private:
 

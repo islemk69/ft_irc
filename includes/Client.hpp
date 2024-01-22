@@ -22,7 +22,7 @@ class Client {
         std::string nick;
         std::string user;
         std::string real;
-        int         fd;//ici fd on peut retrouver le client grace a son fd
+        int         fd;
         // std::string socketBuffer;
         void         addChannel(Channel *newChannel);   
         Channel 	*getChannelByName(const std::string& name);
