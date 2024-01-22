@@ -153,28 +153,33 @@ void Server::hexchatCheck(Client* client, std::string msg) {
 void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
-    ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
-    if (bytesRead == -1) {
-        perror("Error reading client data");
-        close(this->_fds[i].fd);
-        this->_fds.erase(this->_fds.begin() + i);
-        return ;
-    }
+	std::string accumulatedData;
+	std::cout << "hola" << std::endl;
+	while (accumulatedData.find("\r\n") == std::string::npos) {
+        ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
+        if (bytesRead == -1) {
+            perror("Error reading client data");
+            close(this->_fds[i].fd);
+            this->_fds.erase(this->_fds.begin() + i);
+            return;
+        }
 
-    if (bytesRead == 0) {
-        close(this->_fds[i].fd);
-        this->_fds.erase(this->_fds.begin() + i);
-        return ; 
-    }
-    //HUGO TU FOUS TON PERSING A PARTIT D'ICI
+        if (bytesRead == 0) {
+            close(this->_fds[i].fd);
+            this->_fds.erase(this->_fds.begin() + i);
+            return;
+        }
 
-    //hexchatici
+        accumulatedData += std::string(buffer, bytesRead);
+    }
+    //hexchatic
+	std::cout << accumulatedData << std::endl;
 
     Client* client = getClientFromFd(this->_fds[i].fd);
 
-    hexchatCheck(client, buffer);
-
-    Command cmd(buffer);
+    // hexchatCheck(client, accumulatedData);
+	exit(0);
+    Command cmd(accumulatedData);
 
     if (!cmd.isValid) {
         Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
