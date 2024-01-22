@@ -95,59 +95,44 @@ Client* Server::getClientFromFd(int fd) {
     return NULL;
 }
 
-// void Server::hexchatCmd(Command cmd) {
-//     //recupe de la commande venant de haxchat 
-// }
+void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
+    size_t terminator = msgBuffer.find("\r\n", 0);
 
+    //si on ne trouve pas le terminator on arrete ici
+    if (terminator == std::string::npos)
+        return;
 
-void Server::hexchatCheck(Client* client, std::string msg) {
-    if (msg.empty() || msg[0] == ' ') {
-        return ;
-    }
-    std::vector<std::string> splitCmd = ft_split(msg, " ");
+    size_t pos = 0;
+    //sinon tant que le terminator n'est aps trouvé
+    while (terminator != std::string::npos) {
+        //on recupere la partie du message en coupant a partir de pos (0 pour le premier coup) jusqua terminator
+        std::string cmdBuffer = msgBuffer.substr(pos, terminator + 2 - pos);
+        Command cmd(cmdBuffer);
 
-    if (splitCmd.size() == 0) {
-        return ;
-    }
-    std::vector<std::string>::iterator hexchatIt = splitCmd.begin();
-
-    CmdIt cmdIt;
-
-    for (; hexchatIt != splitCmd.end(); hexchatIt++) {
-        if (*hexchatIt == "LS") {
-            //le vector  suivant ets le code du protocole ===>> on sen tape
-            std::cout << "hexchat vetrou" << std::endl;
-            hexchatIt ++; // Skip the next string in the vector
-            hexchatIt ++;
-            while (hexchatIt != splitCmd.end() && Command::isAllCaps(*hexchatIt))
-            {
-                Command cmd; 
-                std::cout << *hexchatIt << std::endl;
-                cmd.command = *hexchatIt;
-                hexchatIt++;
-                if (hexchatIt == splitCmd.end()) break;
-                cmd.args.push_back(*hexchatIt);
-
-                cmdIt = this->_cmds.find(cmd.command);
-                if (cmdIt != this->_cmds.end()) {
-                    if (cmd.command == "USER") {
-                        hexchatIt++;
-                        if (hexchatIt == splitCmd.end()) break;
-                        for (int i = 0; i < 4; i++){
-                            cmd.args.push_back(*hexchatIt);
-                            hexchatIt++;
-                            if (hexchatIt == splitCmd.end()) break;
-                        }
-                        cmdIt->second(client, cmd, this);
-                        return ;
-                    }
-                    cmdIt->second(client, cmd, this);
-                }
-                hexchatIt++;
-                if (hexchatIt == splitCmd.end()) break;
-            }
+        if (cmdBuffer == "CAP LS 302\r\n"){
+            pos = terminator + 2;
+            terminator = msgBuffer.find("\r\n", pos);
+            continue;
         }
+
+
+        if (!cmd.isValid) {
+            Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
+            return ;
+        }
+        CmdIt it = this->_cmds.find(cmd.command);
+
+        //si on trouve
+        if (it != this->_cmds.end()) {
+            it->second(client, cmd, this);
+        } else {
+            Server::sendToClient(client->fd, "pas trouvee");
+        }
+        
+        pos = terminator + 2;
+        terminator = msgBuffer.find("\r\n", pos);
     }
+    msgBuffer = "";
 }
 
 void Server::readClientRequest(int i) {
@@ -177,24 +162,8 @@ void Server::readClientRequest(int i) {
 
     Client* client = getClientFromFd(this->_fds[i].fd);
 
-    // hexchatCheck(client, accumulatedData);
-	exit(0);
-    Command cmd(accumulatedData);
-
-    if (!cmd.isValid) {
-        Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
-        return ;
-    }
-    CmdIt it = this->_cmds.find(cmd.command);
-
-    //si on trouve
-    if (it != this->_cmds.end()) {
-        it->second(client, cmd, this);
-    } else {
-        Server::sendToClient(client->fd, "pas trouvee");
-    }
-    //si la commande n'a pas ete trouver 
-    //LANCEMENT DES COMMANDES EN FONCTION DE LA COMMANDE DETECTER AVEC fonctionCmd(x, this->_clients[i], x)
+    executeCmd(client, accumulatedData, i);
+	// exit(0);
 }
 
 void Server::sendToClient(int fd, const std::string &content) {
