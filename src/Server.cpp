@@ -59,7 +59,8 @@ void Server::initCommand(){
     this->_cmds["TOPIC"] = &topicCmd;
     this->_cmds["USER"] = &userCmd;
     this->_cmds["WHO"] = &whoCmd;
-	// this->_cmds["PART"] = &partCmd;
+	this->_cmds["PART"] = &partCmd;
+	this->_cmds["QUIT"] = &quitCmd;
 }
 
 int iter = 0; //DEBUG
@@ -232,6 +233,14 @@ std::map<int, Client*> Server::getClients() {
 	return this->_clients;
 }
 
+void	Server::rmClient(Client *client)
+{
+	if (!client)
+		return ;
+	this->_clients.erase(client->fd);
+	close(client->fd);
+	delete client;
+}
 
 int Server::getServerSocket(){return this->_serverSocket;}
 
