@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdamitzi <hdamitzi@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: charlie <charlie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:06:52 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/14 18:27:09 by hdamitzi         ###   ########.fr       */
+/*   Updated: 2024/01/22 17:24:09 by charlie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,9 @@ void	kickCmd(Client *client, const Command &command, Server *server);
 void	inviteCmd(Client *client, const Command &command, Server *server);
 void	topicCmd(Client *client, const Command &command, Server *server);
 void	modeCmd(Client *client, const Command &command, Server *server);
+void	partCmd(Client *client, const Command &command, Server *server);
+
+// HEXCHAT AUTOMATIC COMMANDS
+void	whoCmd(Client *client, const Command &command, Server *server);
 
 #endif

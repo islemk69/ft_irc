@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 16:05:52 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:46:46 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					flags.push_back("-l");
 				break ;
 			default :
-				Server::sendToClient(client->fd, std::string("Error : MODE flag not managed : " + command.args[1][i] + std::string("\r\n")));
+				Server::sendToClient(client->fd, std::string(std::string("Error : MODE flag not managed : ") + command.args[1][i] + std::string("\r\n")));
 				break ;
 		}
 	}

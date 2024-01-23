@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 16:38:11 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/17 13:45:40 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,10 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			Server::sendToClient(client->fd, ERR_TOOMANYCHANNELS(client->nick, *chanIt));
 			continue ;
 		}
-		std::string	chanName = *chanIt;
-		chanName.erase(0, 1);
-		Channel	*existingChannel = server->getChannelByName(chanName);
+		Channel	*existingChannel = server->getChannelByName(*chanIt);
 		if (!existingChannel)
 		{
-			Channel	*newChan = new Channel(chanName, client);
+			Channel	*newChan = new Channel(*chanIt, client);
 
 			if (keyIt != keys.end())
 			{

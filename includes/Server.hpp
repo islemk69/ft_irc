@@ -44,20 +44,21 @@ class Server{
 
         Server(Server &cpy);
         Server(std::string port, std::string password);
-        void        initServer();
-        void        initCommand();
-        void        execServer();
-        int         getServerSocket();
-        void        readClientRequest(int i);
-        static void sendToClient(int fd, const std::string &content);
-        Client 		*getClientByNick(const std::string &nick);
-        Client      *getClientFromFd(int fd);
-        void        addChannel(Channel *newChannel);
-        Channel     *getChannelByName(const std::string& name);
-        std::string getPassword()const;
-		void		updateClient(std::string oldNick, std::string newNick);	
-		bool		isNickUsed(Client *client, std::string nick);
-        void        executeCmd(Client * client, std::string & msgBuffer, int i);
+        void        			initServer();
+        void        			initCommand();
+        void        			execServer();
+        int						getServerSocket();
+        void            		readClientRequest(int i);
+        static void     		sendToClient(int fd, const std::string &content);
+        Client 					*getClientByNick(const std::string &nick);
+        Client      			*getClientFromFd(int fd);
+        void        			addChannel(Channel *newChannel);
+        Channel     			*getChannelByName(const std::string& name);
+        std::string 			getPassword()const;
+		void					updateClient(std::string oldNick, std::string newNick);	
+		bool   					isNickUsed(Client *client, std::string nick);
+        void        			executeCmd(Client * client, std::string & msgBuffer, int i);
+        std::map<int, Client*>	getClients();
         
 
 
