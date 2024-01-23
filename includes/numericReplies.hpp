@@ -6,7 +6,7 @@
 /*   By: charlie <charlie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:19:04 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/11 17:33:31 by charlie          ###   ########.fr       */
+/*   Updated: 2024/01/22 17:22:52 by charlie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define NUMERICREPLIES_HPP
 
 # define SERVER_NAME std::string("FT_IRC")
+# define LOCALHOST_IP "127.0.0.1"
 
 // ---- CUSTOM RPL_* ----
 
@@ -37,6 +38,9 @@
 # define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 302 " \
 	+ nick + " " + channel + " :" + topic + "\r\n")
 
+# define RPL_ENDOFWHO(nick, mask) (":" + SERVER_NAME + " 315 " \
+	+ nick + " " + mask + " :End of WHO list\r\n")
+
 # define RPL_CHANNELMODEIS(nick, channel, modestring) (":" + SERVER_NAME + " 324 " \
 	+ nick + " " + channel + " " + modestring + "\r\n")
 
@@ -51,6 +55,10 @@
 
 # define RPL_INVITING(nick, target, channel) (":" + SERVER_NAME + " 341 " \
 	+ nick + " " + target + " " + channel + "\r\n")
+
+# define RPL_WHOREPLY(client, channel, user, nick, flag, real) (":" + SERVER_NAME + " 352" \
+	+ client + " " + channel + " " + user + " " + LOCALHOST_IP + " " + SERVER_NAME + " " + nick \
+	+ " " + flag + " :0 " + real + "\r\n")
 
 # define RPL_NAMREPLY(nick, symbol, channel, names) (":" + SERVER_NAME + " 353 " \
 	+ nick + " " + symbol + " " + channel + " " + names + "\r\n")
