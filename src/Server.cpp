@@ -59,6 +59,7 @@ void Server::initCommand(){
     this->_cmds["TOPIC"] = &topicCmd;
     this->_cmds["USER"] = &userCmd;
     this->_cmds["WHO"] = &whoCmd;
+	// this->_cmds["PART"] = &partCmd;
 }
 
 int iter = 0; //DEBUG
@@ -226,6 +227,11 @@ bool Server::isNickUsed(Client *client, std::string nick) {
 std::string Server::getPassword()const{
     return this->_password; 
 }
+
+std::map<int, Client*> Server::getClients() {
+	return this->_clients;
+}
+
 
 int Server::getServerSocket(){return this->_serverSocket;}
 

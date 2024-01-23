@@ -42,6 +42,7 @@ std::map<std::string, Channel*> Client::getChannels()const {
 	return this->_channels;
 }
 
+
 Client::~Client(){
     
 }

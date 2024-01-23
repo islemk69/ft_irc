@@ -35,6 +35,7 @@ void	kickCmd(Client *client, const Command &command, Server *server);
 void	inviteCmd(Client *client, const Command &command, Server *server);
 void	topicCmd(Client *client, const Command &command, Server *server);
 void	modeCmd(Client *client, const Command &command, Server *server);
+void	partCmd(Client *client, const Command &command, Server *server);
 
 // HEXCHAT AUTOMATIC COMMANDS
 void	whoCmd(Client *client, const Command &command, Server *server);
