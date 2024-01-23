@@ -59,7 +59,7 @@ void Server::initCommand(){
     this->_cmds["TOPIC"] = &topicCmd;
     this->_cmds["USER"] = &userCmd;
     this->_cmds["WHO"] = &whoCmd;
-	// this->_cmds["PART"] = &partCmd;
+	this->_cmds["PART"] = &partCmd;
 }
 
 int iter = 0; //DEBUG
