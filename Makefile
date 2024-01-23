@@ -15,6 +15,7 @@ SRCS =	src/main.cpp \
 		src/commands/topic.cpp \
 		src/commands/user.cpp \
 		src/commands/part.cpp \
+		src/commands/quit.cpp \
 		src/commands/who.cpp
 
 OBJS_DIR = .obj
