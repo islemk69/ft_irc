@@ -6,7 +6,8 @@ Channel::Channel(std::string name, Client *client){
 	
 	chanUser	newUser;
 	newUser.client = client;
-	newUser.isOp = true;
+	newUser.isOp = new bool;
+	*newUser.isOp = true;
 	this->_chanUsers[client->nick] = newUser;
 }
 
@@ -89,7 +90,8 @@ void			Channel::addClient(Client *client)
 {
 	chanUser	newUser;
 	newUser.client = client;
-	newUser.isOp = false;
+	newUser.isOp = new bool;
+	*newUser.isOp = false;
 	this->_chanUsers[client->nick] = newUser;
 }
 
@@ -98,6 +100,7 @@ void            Channel::eraseClient(const std::string & client)
 	std::map<std::string, chanUser>::iterator	it = this->_chanUsers.find(client);
 	if (it == this->_chanUsers.end())
 		return ;
+	delete it->second.isOp;
 	this->_chanUsers.erase(client);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 16:48:31 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:39:50 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			{
 				if (clientsIt != clients.begin())
 					names.append(" ");
-				if (clientsIt->second.isOp)
+				if (*clientsIt->second.isOp)
 					names.append("@");
 				names.append(clientsIt->first);
 			}

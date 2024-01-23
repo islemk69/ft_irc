@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 13:23:58 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 16:49:18 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:37:24 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class Client;
 typedef struct t_chanUser
 {
     Client	*client;
-    bool	isOp;
+    bool	*isOp;
 }	chanUser;
 
 class Channel {

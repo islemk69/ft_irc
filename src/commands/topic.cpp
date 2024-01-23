@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   topic.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 16:47:19 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:40:20 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	topicCmd(Client *client, const Command &command, Server *server)
 		return ;
 	}
 	chanUser *cu = channel->getClientByNick(client->nick);
-	if (channel->hasMode('t') && !cu->isOp)
+	if (channel->hasMode('t') && !*cu->isOp)
 	{
 		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;

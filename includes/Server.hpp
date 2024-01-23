@@ -60,6 +60,7 @@ class Server{
         void        			executeCmd(Client * client, std::string & msgBuffer, int i);
         std::map<int, Client*>	getClients();
 		void					rmClient(Client *client);
+		void					rmChannel(Channel *channel);
         
 
 

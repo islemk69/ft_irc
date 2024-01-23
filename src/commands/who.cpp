@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   who.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: charlie <charlie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 17:24:14 by charlie           #+#    #+#             */
-/*   Updated: 2024/01/22 18:49:48 by charlie          ###   ########.fr       */
+/*   Updated: 2024/01/23 18:40:36 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	whoCmd(Client *client, const Command &command, Server *server)
 			{
 				chanName = currentClientChannels.begin()->second->getName();
 				chanUser	*cu = currentClientChannels.begin()->second->getClientByNick(client->nick);
-				if (cu->isOp)
+				if (*cu->isOp)
 					flags.append("@");
 			}
 			Server::sendToClient(client->fd, RPL_WHOREPLY(client->nick, chanName, \
@@ -53,12 +53,12 @@ void	whoCmd(Client *client, const Command &command, Server *server)
 			for (chanUsersIt = chanUsers.begin(); chanUsersIt != chanUsers.end(); chanUsersIt++)
 			{
 				Client	*currentClient = chanUsersIt->second.client;
-				if (opOnly && chanUsersIt->second.isOp)
+				if (opOnly && *chanUsersIt->second.isOp)
 					continue ;
 				if (channel->getClientByNick(client->nick))
 				{
 					std::string	flags = "H";
-					if (chanUsersIt->second.isOp)
+					if (*chanUsersIt->second.isOp)
 						flags.append("@");
 					Server::sendToClient(client->fd, RPL_WHOREPLY(client->nick, channel->getName(), \
 						currentClient->user, currentClient->nick, flags, currentClient->real));
@@ -86,7 +86,7 @@ void	whoCmd(Client *client, const Command &command, Server *server)
 					{
 						chanName = currentClientChannels.begin()->second->getName();
 						chanUser	*cu = currentClientChannels.begin()->second->getClientByNick(client->nick);
-						if (cu->isOp)
+						if (*cu->isOp)
 							flags.append("@");
 					}
 					Server::sendToClient(client->fd, RPL_WHOREPLY(client->nick, chanName, \

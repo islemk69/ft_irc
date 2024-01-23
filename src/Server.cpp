@@ -242,6 +242,14 @@ void	Server::rmClient(Client *client)
 	delete client;
 }
 
+void	Server::rmChannel(Channel *channel)
+{
+	if (!channel)
+		return ;
+	this->_channels.erase(channel->getName());
+	delete channel;
+}
+
 int Server::getServerSocket(){return this->_serverSocket;}
 
 

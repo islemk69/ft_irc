@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/17 13:46:46 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:40:01 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 		return ;
 	}
 	chanUser	*cu = channel->getClientByNick(client->nick);
-	if (!cu->isOp)
+	if (!*cu->isOp)
 	{
 		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;
@@ -153,9 +153,9 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					break ;
 				}
 				if (flagsItStr[0] == '+')
-					cu->isOp = true;
+					*cu->isOp = true;
 				else
-					cu->isOp = false;
+					*cu->isOp = false;
 				break ;
 			case 'l' :
 				if (flagsItStr[0] == '+')
