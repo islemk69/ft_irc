@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/17 13:45:40 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/23 16:28:30 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			server->addChannel(newChan);
 			client->addChannel(newChan);
 			Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, "JOIN", newChan->getName()));
+			Server::sendToClient(client->fd, RPL_NAMREPLY(client->nick, "=", *chanIt, std::string("@") + client->nick));
+			Server::sendToClient(client->fd, RPL_ENDOFNAMES(client->nick, *chanIt));
 			continue ;
 		}
 		else
@@ -88,6 +90,20 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 			existingChannel->addClient(client);
 			existingChannel->sendToAll(RPL_CMD(client->nick, client->user, "JOIN", *chanIt));
 			Server::sendToClient(client->fd, RPL_TOPIC(client->nick, existingChannel->getName(), existingChannel->getTopic()));
+			
+			std::map<std::string, chanUser>				clients = existingChannel->getClients();
+			std::map<std::string, chanUser>::iterator	clientsIt;
+			std::string									names;
+			for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
+			{
+				if (clientsIt != clients.begin())
+					names.append(" ");
+				if (clientsIt->second.isOp)
+					names.append("@");
+				names.append(clientsIt->first);
+			}
+			Server::sendToClient(client->fd, RPL_NAMREPLY(client->nick, "=", existingChannel->getName(), names));
+			Server::sendToClient(client->fd, RPL_ENDOFNAMES(client->nick, existingChannel->getName()));
 		}
 		if (keyIt != keys.end())
 			keyIt++;
