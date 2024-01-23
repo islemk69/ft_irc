@@ -22,6 +22,7 @@
 #include "Channel.hpp"
 #include "numericReplies.hpp"
 #include "utils.hpp"
+#include "signal.hpp"
 
 
 
@@ -59,8 +60,6 @@ class Server{
 		bool   					isNickUsed(Client *client, std::string nick);
         void        			executeCmd(Client * client, std::string & msgBuffer, int i);
         std::map<int, Client*>	getClients();
-        
-
 
         ~Server();
 
