@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/17 13:50:43 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/24 17:28:19 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,11 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 				Server::sendToClient(client->fd, ERR_NOTEXTTOSEND(client->nick));
 				return ;
 			}
+
+			std::string completeMsg = joinStr(command.args);
+			
 			channel->sendToAllButClient(client->fd, RPL_CMD(client->nick, client->user, \
-				"PRIVMSG " + *it, command.args[1]));
+				"PRIVMSG " + *it, completeMsg));
 		}
 		else
 		{
@@ -76,10 +79,11 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 				return ;
 			}
 
-			std::string comleteMsg = joinStr(command.args);
+			std::string completeMsg = joinStr(command.args);
 
+			std::cout << "complete msg = " << completeMsg << "sent to = " << target->nick << std::endl;
 			Server::sendToClient(target->fd, RPL_CMD(client->nick, client->user, \
-				"PRIVMSG", ": " + comleteMsg));
+				"PRIVMSG", ": " + completeMsg));
 		}
 	}
 }
