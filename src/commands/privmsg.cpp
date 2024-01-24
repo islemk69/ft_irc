@@ -13,6 +13,16 @@
 #include "../../includes/commands.hpp"
 #include "../../includes/utils.hpp"
 
+std::string joinStr(std::vector<std::string> args) {
+	std::string finalString;
+	for (int i = 1; i < args.size(); i++) {
+		finalString += args[i];
+		if (i != args.size() - 1)
+			finalString += ' ';
+	}
+	return (finalString);
+}
+
 void	privmsgCmd(Client *client, const Command &command, Server *server)
 {
 	if (command.args.empty())
@@ -65,8 +75,11 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 				Server::sendToClient(client->fd, ERR_NOTEXTTOSEND(client->nick));
 				return ;
 			}
+
+			std::string comleteMsg = joinStr(command.args);
+
 			Server::sendToClient(target->fd, RPL_CMD(client->nick, client->user, \
-				"PRIVMSG", ": " + command.args[1]));
+				"PRIVMSG", ": " + comleteMsg));
 		}
 	}
 }

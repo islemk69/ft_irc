@@ -142,7 +142,7 @@ void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
 	std::string accumulatedData;
-	std::cout << "hola" << std::endl;
+
 	while (accumulatedData.find("\r\n") == std::string::npos) {
         ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
         if (bytesRead == -1) {
@@ -166,7 +166,6 @@ void Server::readClientRequest(int i) {
     Client* client = getClientFromFd(this->_fds[i].fd);
 
     executeCmd(client, accumulatedData, i);
-	// exit(0);
 }
 
 void Server::sendToClient(int fd, const std::string &content) {
