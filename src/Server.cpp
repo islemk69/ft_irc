@@ -119,8 +119,9 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
         }
 
 
+		std::string	clientNick = client->nick.empty() ? std::string("Client") : client->nick;
         if (!cmd.isValid) {
-            Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
+            Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(clientNick, cmd.command));
             return ;
         }
         CmdIt it = this->_cmds.find(cmd.command);
@@ -129,7 +130,7 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
         if (it != this->_cmds.end()) {
             it->second(client, cmd, this);
         } else {
-            Server::sendToClient(client->fd, "pas trouvee");
+            Server::sendToClient(client->fd, ERR_UNKNOWNCOMMAND(clientNick, cmd.command));
         }
         
         pos = terminator + 2;

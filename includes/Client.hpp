@@ -26,9 +26,9 @@ class Client {
         // std::string socketBuffer;
         void         addChannel(Channel *newChannel);   
         Channel 	*getChannelByName(const std::string& name);
-        void        leaveAll();
+        void        leaveAll(Server *server);
         void        eraseChannel(const std::string & target);
-        void        leaveChannel(Channel *channel, std::string cause);
+        void        leaveChannel(Channel *channel, std::string cause, Server *server);
         int         chansJoined();
 		std::map<std::string, Channel*> getChannels()const;
 };

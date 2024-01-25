@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 18:39:50 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/25 15:18:50 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 	}
 	if (command.args[0] == "0")
 	{
-		client->leaveAll();
+		client->leaveAll(server);
 		return ;
 	}
 	std::vector<std::string>	channels = ft_split(command.args[0], ",");

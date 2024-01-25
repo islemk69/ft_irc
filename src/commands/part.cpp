@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:10:54 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 18:43:47 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/25 15:18:36 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,30 +37,6 @@ void	partCmd(Client *client, const Command &command, Server *server)
 			Server::sendToClient(client->fd, ERR_NOTONCHANNEL(client->nick, *chanIt));
 			return ;
 		}
-		int											nOp = 0;
-		std::map<std::string, chanUser>				clients = channel->getClients();
-		std::map<std::string, chanUser>::iterator	clientsIt;
-		for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
-		{
-			if (*clientsIt->second.isOp)
-				nOp++;
-			std::cout << "nick = " << clientsIt->first << std::endl;
-		}
-		if (*cu->isOp && nOp == 1)
-		{
-			clientsIt = clients.begin();
-			if (clientsIt->first == cu->client->nick)
-				clientsIt++;
-			if (clients.size() > 1)
-			{
-				cu = channel->getClientByNick(clientsIt->first);
-				*cu->isOp = true;
-			}
-		}
-		client->eraseChannel(*chanIt);
-		channel->eraseClient(client->nick);
-		channel->sendToAll(RPL_CMD(client->nick, client->user, "PART", (channel->getName() + " " + reason)));
-		if (channel->getClients().size() == 0)
-			server->rmChannel(channel);
+		client->leaveChannel(channel, reason, server);
 	}
 }
