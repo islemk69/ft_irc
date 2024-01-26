@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   numericReplies.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: charlie <charlie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:19:04 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/22 17:22:52 by charlie          ###   ########.fr       */
+/*   Updated: 2024/01/23 16:51:27 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,6 @@
 
 // ---- NUMERICS : RPL_* ----
 
-# define RPL_AWAY(nick, target, message) (":" + SERVER_NAME + " 301 " \
-	+ nick + " " + target + " :" + message + "\r\n")
-
 # define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 302 " \
 	+ nick + " " + channel + " :" + topic + "\r\n")
 
@@ -44,14 +41,8 @@
 # define RPL_CHANNELMODEIS(nick, channel, modestring) (":" + SERVER_NAME + " 324 " \
 	+ nick + " " + channel + " " + modestring + "\r\n")
 
-# define RPL_CREATIONTIME(nick, channel, creationtime) (":" + SERVER_NAME + " 329 " \
-	+ nick + " " + channel + " " + creationtime + "\r\n")
-
 # define RPL_NOTOPIC(nick, channel) (":" + SERVER_NAME + " 331 " \
 	+ nick + " " + channel + " :No topic is set\r\n")
-
-# define RPL_TOPICWHOTIME(nick, channel, who, time) (":" + SERVER_NAME + " 333 " \
-	+ nick + " " + channel + " " + who + " " + time + "\r\n")
 
 # define RPL_INVITING(nick, target, channel) (":" + SERVER_NAME + " 341 " \
 	+ nick + " " + target + " " + channel + "\r\n")

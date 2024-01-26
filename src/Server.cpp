@@ -61,6 +61,7 @@ void Server::initCommand(){
     this->_cmds["USER"] = &userCmd;
     this->_cmds["WHO"] = &whoCmd;
 	this->_cmds["PART"] = &partCmd;
+	this->_cmds["QUIT"] = &quitCmd;
 }
 
 int iter = 0; //DEBUG
@@ -73,7 +74,7 @@ void Server::execServer(){
     if (this->_fds[0].revents & POLLIN) { 
         int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
-            Client* newClient = new Client(fdClient);
+            Client* newClient = new Client(fdClient);//LEAK
             std::cout << "Client n " << iter << ", fd ----> " << newClient->fd << std::endl; // DEBUG
             iter++; //DEBUG
             this->_clients[fdClient] = newClient;
@@ -119,8 +120,9 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
         }
 
 
+		std::string	clientNick = client->nick.empty() ? std::string("Client") : client->nick;
         if (!cmd.isValid) {
-            Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(std::string("Client"), cmd.command));
+            Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(clientNick, cmd.command));
             return ;
         }
         CmdIt it = this->_cmds.find(cmd.command);
@@ -129,7 +131,7 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
         if (it != this->_cmds.end()) {
             it->second(client, cmd, this);
         } else {
-            Server::sendToClient(client->fd, "pas trouvee");
+            Server::sendToClient(client->fd, ERR_UNKNOWNCOMMAND(clientNick, cmd.command));
         }
         
         pos = terminator + 2;
@@ -142,6 +144,7 @@ void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
 	std::string accumulatedData;
+    Client* client = getClientFromFd(this->_fds[i].fd);
 
 	while (accumulatedData.find("\r\n", 0) == std::string::npos) {
         ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
@@ -153,7 +156,11 @@ void Server::readClientRequest(int i) {
         }
 
         if (bytesRead == 0) {
+            Command qtCmd("QUIT :Leaving");
+            quitCmd(client, qtCmd, this);
             close(this->_fds[i].fd);
+            //delete client
+            //delete channel if nbUser == 1
             this->_fds.erase(this->_fds.begin() + i);
             return;
         }
@@ -163,7 +170,6 @@ void Server::readClientRequest(int i) {
     //hexchatic
 	std::cout << accumulatedData << std::endl;
 
-    Client* client = getClientFromFd(this->_fds[i].fd);
 
     executeCmd(client, accumulatedData, i);
 }
@@ -222,7 +228,25 @@ std::map<int, Client*> Server::getClients() {
 	return this->_clients;
 }
 
+void	Server::rmClient(Client *client)
+{
+	if (!client)
+		return ;
+	this->_clients.erase(client->fd);
+	close(client->fd);
+	delete client;
+}
+
+void	Server::rmChannel(Channel *channel)
+{
+	if (!channel)
+		return ;
+	this->_channels.erase(channel->getName());
+	delete channel;
+}
+
 int Server::getServerSocket(){return this->_serverSocket;}
 
 
-Server::~Server(){}
+Server::~Server(){
+}

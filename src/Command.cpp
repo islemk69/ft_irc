@@ -39,7 +39,6 @@ Command::Command(std::string msg) : isValid(true)
         *it = toupper(*it);
     }
 
-    //une fois qu'on a verifier que la commande ne contient que des caracteres alphanumeriques on les mets dans un tableau
     std::vector<std::string>::iterator itVec;
     for (itVec = splitCmd.begin(); itVec != splitCmd.end(); itVec++) {
         std::cout << *itVec << std::endl;

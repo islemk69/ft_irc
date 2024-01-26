@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 13:58:23 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 15:45:07 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:39:46 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	inviteCmd(Client *client, const Command &command, Server *server)
 		return ;
 	}
 	chanUser *cu = channel->getClientByNick(client->nick);
-	if (channel->hasMode('i') && !cu->isOp)
+	if (channel->hasMode('i') && !*cu->isOp)
 	{
 		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;

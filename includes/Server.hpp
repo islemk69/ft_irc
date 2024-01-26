@@ -60,6 +60,10 @@ class Server{
 		bool   					isNickUsed(Client *client, std::string nick);
         void        			executeCmd(Client * client, std::string & msgBuffer, int i);
         std::map<int, Client*>	getClients();
+		void					rmClient(Client *client);
+		void					rmChannel(Channel *channel);
+        
+
 
         ~Server();
 

@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:10:54 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 16:10:57 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/25 15:18:36 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ void	partCmd(Client *client, const Command &command, Server *server)
 			Server::sendToClient(client->fd, ERR_NOTONCHANNEL(client->nick, *chanIt));
 			return ;
 		}
-		client->eraseChannel(*chanIt);
-		channel->eraseClient(client->nick);
-		channel->sendToAll(RPL_CMD(client->nick, client->user, "PART", (channel->getName() + " " + reason)));
+		client->leaveChannel(channel, reason, server);
 	}
 }
