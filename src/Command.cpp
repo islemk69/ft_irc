@@ -21,7 +21,7 @@ Command::Command(std::string msg) : isValid(true)
         this->isValid = false;
         return ;
     }
-    std::vector<std::string> splitCmd = ft_split(msg, " ");
+    std::vector<std::string> splitCmd = ft_split2(msg, " ", 0);
     if (splitCmd.size() == 0) {
         this->isValid = false;
         return ;

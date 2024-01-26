@@ -20,7 +20,7 @@ void	partCmd(Client *client, const Command &command, Server *server)
 		return ;
 	}
 	std::string							reason = command.args.size() > 1 ? command.args[1] : "";
-	std::vector<std::string>			channels = ft_split(command.args[0], ",");
+	std::vector<std::string>			channels = ft_split(command.args[0], ",", 1);
 	std::vector<std::string>::iterator	chanIt;
 
 	for (chanIt = channels.begin(); chanIt != channels.end(); chanIt++)

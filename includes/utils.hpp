@@ -15,7 +15,8 @@
 
 # include "Server.hpp"
 
-std::vector<std::string>	ft_split(const std::string & msg, const std::string & delim);
+std::vector<std::string>	ft_split(const std::string & msg, const std::string & delim, int flg);
+std::vector<std::string> ft_split2(std::string &msg, const std::string &delim, int flg);
 std::string					copyToUpper(std::string src);
 
 #endif
