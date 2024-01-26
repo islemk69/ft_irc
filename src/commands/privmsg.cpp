@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/26 15:05:27 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:32:17 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 void	privmsgCmd(Client *client, const Command &command, Server *server)
 {
+	if (!client->isRegistered)
+	{
+		Server::sendToClient(client->fd, ERR_NOTREGISTERED("Client"));
+		return ;
+	}
 	if (command.args.empty())
 	{
 		Server::sendToClient(client->fd, ERR_NORECIPIENT(client->nick, command.command));

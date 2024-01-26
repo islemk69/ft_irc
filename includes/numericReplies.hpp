@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:19:04 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/26 15:30:12 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:27:55 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,9 @@
 
 # define ERR_USERONCHANNEL(nick, target, channel) (":" + SERVER_NAME + " 443 " \
 	+ nick + " " + target + " " + channel + " :is already on channel\r\n")
+	
+# define ERR_NOTREGISTERED(nick) (":" + SERVER_NAME + " 451 " \
+	+ nick + " :You have not registered\r\n")
 
 # define ERR_NEEDMOREPARAMS(nick, command) (":" + SERVER_NAME + " 461 " \
 	+ nick + " " + command + " :Not enough parameters\r\n")

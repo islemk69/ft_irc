@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/26 15:31:07 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:28:45 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 	}
 	if (!client->isRegistered)
 	{
-		Server::sendToClient(client->fd, "Error not registered\r\n");
+		Server::sendToClient(client->fd, ERR_NOTREGISTERED("Client"));
 		return ;
 	}
 	std::vector<std::string>	channels = ft_split(command.args[0], ",");

@@ -43,28 +43,29 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 		if (clients.size() > 1)
 		{
 			cu = channel->getClientByNick(clientsIt->first);
-			*cu->isOp = true;
-		}
-		clients = channel->getClients();
-		for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
-		{
-			if (clientsIt != clients.begin())
-				names.append(" ");
-			if (*clientsIt->second.isOp)
-				names.append("@");
-			names.append(clientsIt->first);
-		}
-		for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
-		{
-			Server::sendToClient(clientsIt->second.client->fd, \
-				RPL_NAMREPLY(clientsIt->second.client->nick, "=", channel->getName(), names));
-			Server::sendToClient(clientsIt->second.client->fd, \
-				RPL_ENDOFNAMES(clientsIt->second.client->nick, channel->getName()));
+			if (cu)
+				*cu->isOp = true;
 		}
 	}
 	channel->sendToAll(RPL_CMD(this->nick, this->user, "PART", (channel->getName() + " " + cause)));
 	this->eraseChannel(channel->getName());
 	channel->eraseClient(this->nick);
+	clients = channel->getClients();
+	for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
+	{
+		if (clientsIt != clients.begin())
+			names.append(" ");
+		if (*clientsIt->second.isOp)
+			names.append("@");
+		names.append(clientsIt->first);
+	}
+	for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
+	{
+		Server::sendToClient(clientsIt->second.client->fd, \
+			RPL_NAMREPLY(clientsIt->second.client->nick, "=", channel->getName(), names));
+		Server::sendToClient(clientsIt->second.client->fd, \
+			RPL_ENDOFNAMES(clientsIt->second.client->nick, channel->getName()));
+	}
 	if (channel->getClients().size() == 0)
 		server->rmChannel(channel);
 }
