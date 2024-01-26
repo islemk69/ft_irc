@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
         server.initServer();
         printLoadingAnimation();
         std::cout << GREEN << "IRC server Launched" << DEFAULT << std::endl;
-        while (true) {
+        while (sig::stopServer == false) {
             server.execServer();
         }
     } catch (const std::exception& e) {

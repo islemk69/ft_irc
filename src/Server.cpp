@@ -46,6 +46,7 @@ void Server::initServer(){
     this->_fds[0].fd = this->_serverSocket;
     this->_fds[0].events = POLLIN;
     this->initCommand();
+    signal(SIGINT, sig::signalHandler);
 }
 
 void Server::initCommand(){
@@ -67,14 +68,14 @@ void Server::initCommand(){
 int iter = 0; //DEBUG
 
 void Server::execServer(){
-    if (poll(&this->_fds[0], this->_fds.size(), -1) == -1) { 
+    if (poll(&this->_fds[0], this->_fds.size(), -1) == -1 && sig::stopServer == false) { 
         throw std::runtime_error("Error in poll");
-    } 
+    }
 
     if (this->_fds[0].revents & POLLIN) { 
         int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
-            Client* newClient = new Client(fdClient);
+            Client* newClient = new Client(fdClient);//LEAK
             std::cout << "Client n " << iter << ", fd ----> " << newClient->fd << std::endl; // DEBUG
             iter++; //DEBUG
             this->_clients[fdClient] = newClient;
@@ -144,8 +145,9 @@ void Server::readClientRequest(int i) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
 	std::string accumulatedData;
+    Client* client = getClientFromFd(this->_fds[i].fd);
 
-	while (accumulatedData.find("\r\n") == std::string::npos) {
+	while (accumulatedData.find("\r\n", 0) == std::string::npos) {
         ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
         if (bytesRead == -1) {
             perror("Error reading client data");
@@ -155,7 +157,11 @@ void Server::readClientRequest(int i) {
         }
 
         if (bytesRead == 0) {
+            Command qtCmd("QUIT :Leaving");
+            quitCmd(client, qtCmd, this);
             close(this->_fds[i].fd);
+            //delete client
+            //delete channel if nbUser == 1
             this->_fds.erase(this->_fds.begin() + i);
             return;
         }
@@ -165,7 +171,6 @@ void Server::readClientRequest(int i) {
     //hexchatic
 	std::cout << accumulatedData << std::endl;
 
-    Client* client = getClientFromFd(this->_fds[i].fd);
 
     executeCmd(client, accumulatedData, i);
 }
@@ -182,15 +187,6 @@ void Server::sendToClient(int fd, const std::string &content) {
     }
 }
 
-// Client *Server::getClientByName(const std::string &name) {
-// 	for (clientIt it = this->_clients.begin(); it != this->_clients.end(); it++) {
-// 		if (Utils::copyToUpper(name) == Utils::copyToUpper(it->second->nickName)) {
-// 			return it->second;
-// 		}
-// 	}
-// 	return NULL;
-// }
-
 Channel *Server::getChannelByName(const std::string& name) {
 	for (std::map<std::string, Channel*>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++) {
 		if (it->second->getName() == name) {
@@ -199,7 +195,6 @@ Channel *Server::getChannelByName(const std::string& name) {
 	}
 	return NULL;
 }
-
 
 Client 		*Server::getClientByNick(const std::string &nick){
     for (std::map<int, Client*>::iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
@@ -254,4 +249,5 @@ void	Server::rmChannel(Channel *channel)
 int Server::getServerSocket(){return this->_serverSocket;}
 
 
-Server::~Server(){}
+Server::~Server(){
+}

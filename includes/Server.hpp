@@ -22,6 +22,7 @@
 #include "Channel.hpp"
 #include "numericReplies.hpp"
 #include "utils.hpp"
+#include "signal.hpp"
 
 
 

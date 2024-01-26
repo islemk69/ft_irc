@@ -15,8 +15,9 @@ SRCS =	src/main.cpp \
 		src/commands/topic.cpp \
 		src/commands/user.cpp \
 		src/commands/part.cpp \
-		src/commands/quit.cpp \
 		src/commands/who.cpp \
+		src/signal.cpp \
+		src/commands/quit.cpp \
 		src/commands/bot.cpp
 
 OBJS_DIR = .obj
@@ -30,7 +31,8 @@ HEAD = 	includes/Server.hpp \
 		includes/utils.hpp \
 		includes/numericReplies.hpp	\
 		includes/commands.hpp \
-		includes/Command.hpp
+		includes/Command.hpp \
+		includes/signal.hpp
 RM = rm -f
 
 GREEN = \033[0;32m
