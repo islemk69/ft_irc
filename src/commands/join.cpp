@@ -25,6 +25,11 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 		client->leaveAll(server);
 		return ;
 	}
+	if (!client->isRegistered)
+	{
+		Server::sendToClient(client->fd, "Error not registered\r\n");
+		return ;
+	}
 	std::vector<std::string>	channels = ft_split(command.args[0], ",");
 	std::vector<std::string>	keys;
 	if (command.args.size() > 1)

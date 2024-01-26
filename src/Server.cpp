@@ -157,12 +157,13 @@ void Server::readClientRequest(int i) {
         }
 
         if (bytesRead == 0) {
-            Command qtCmd("QUIT :Leaving");
+            Command qtCmd("QUIT :Leaving\r\n");
             quitCmd(client, qtCmd, this);
-            close(this->_fds[i].fd);
-            //delete client
-            //delete channel if nbUser == 1
+
+            // //delete client
+            // //delete channel if nbUser == 1
             this->_fds.erase(this->_fds.begin() + i);
+			close(this->_fds[i].fd);
             return;
         }
 
