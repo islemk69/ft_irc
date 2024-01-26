@@ -16,7 +16,8 @@ SRCS =	src/main.cpp \
 		src/commands/user.cpp \
 		src/commands/part.cpp \
 		src/commands/quit.cpp \
-		src/commands/who.cpp
+		src/commands/who.cpp \
+		src/commands/bot.cpp
 
 OBJS_DIR = .obj
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))

@@ -61,6 +61,7 @@ void Server::initCommand(){
     this->_cmds["WHO"] = &whoCmd;
 	this->_cmds["PART"] = &partCmd;
 	this->_cmds["QUIT"] = &quitCmd;
+	this->_cmds["BOT"] = &botCmd;
 }
 
 int iter = 0; //DEBUG

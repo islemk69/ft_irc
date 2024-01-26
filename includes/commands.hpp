@@ -41,4 +41,7 @@ void	partCmd(Client *client, const Command &command, Server *server);
 void	quitCmd(Client *client, const Command &command, Server *server);
 void	whoCmd(Client *client, const Command &command, Server *server);
 
+//BOT COMMAND
+void	botCmd(Client* client, const Command& command, Server* server);
+
 #endif
