@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:16:20 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/12 16:40:02 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/26 15:40:49 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,11 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 	{
 		client->isRegistered = true;
 		client->nick = command.args[0];
-		Server::sendToClient(client->fd, std::string("Nick " + client->nick \
-			+ " has successfully been registered\r\n"));
+		Server::sendToClient(client->fd, RPL_CMD(client->nick, "", "NICK", client->nick));
 	}
 	else
 	{
-		Server::sendToClient(client->fd, std::string("Nick " + client->nick \
-			+ " has succesfully been changed to " + command.args[0] + "\r\n"));
+		Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, "NICK", command.args[0]));
 		std::map<std::string, Channel* >	channels = client->getChannels();
 		for (std::map<std::string, Channel* >::iterator chanIt = channels.begin(); chanIt != channels.end(); chanIt++)
 		{
@@ -65,8 +63,8 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 				clientIt != channelClients.end(); clientIt++)
 			{
 				if (clientIt->second.client->nick != client->nick)
-					Server::sendToClient(clientIt->second.client->fd, std::string(client->nick \
-						+ " has changed his nick to " + command.args[0] + "\r\n"));
+					Server::sendToClient(clientIt->second.client->fd, \
+						RPL_CMD(client->nick, client->user, "NICK", command.args[0]));
 			}
 		}
 		client->nick = command.args[0];

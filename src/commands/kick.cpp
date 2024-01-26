@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 14:51:23 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 18:39:53 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 15:31:52 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NEEDMOREPARAMS(client->nick, command.command));
 		return ;
 	}
-	Channel	*channel = server->getChannelByName(command.args[1]);
+	Channel	*channel = server->getChannelByName(command.args[0]);
 	if (!channel)
 	{
 		Server::sendToClient(client->fd, ERR_NOSUCHCHANNEL(client->nick, command.args[1]));
 		return ;
 	}
-	channel = client->getChannelByName(command.args[1]);
+	channel = client->getChannelByName(command.args[0]);
 	if (!channel)
 	{
 		Server::sendToClient(client->fd, ERR_NOTONCHANNEL(client->nick, command.args[1]));
@@ -37,10 +37,10 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;
 	}
-	Client	*target = server->getClientByNick(command.args[0]);
+	Client	*target = server->getClientByNick(command.args[1]);
 	if (!target)
 	{
-		Server::sendToClient(client->fd, ERR_NOSUCHNICK(client->nick, command.args[0]));
+		Server::sendToClient(client->fd, ERR_NOSUCHNICK(client->nick, command.args[1]));
 		return ;
 	}
 	if (!channel->getClientByNick(target->nick))

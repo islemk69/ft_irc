@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ikaismou <ikaismou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 15:37:11 by ikaismou          #+#    #+#             */
-/*   Updated: 2024/01/19 14:30:00 by ikaismou         ###   ########.fr       */
+/*   Updated: 2024/01/26 15:05:00 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,14 @@ std::string copyToUpper(std::string src){
     std::string res = src;
 	std::transform(src.begin(), src.end(), src.begin(), toupper);
 	return res;
+}
+
+std::string joinStr(std::vector<std::string> args) {
+	std::string finalString;
+	for (int i = 1; i < args.size(); i++) {
+		finalString += args[i];
+		if (i != args.size() - 1)
+			finalString += ' ';
+	}
+	return (finalString);
 }

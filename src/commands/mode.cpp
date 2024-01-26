@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 18:40:01 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 15:01:12 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,13 +112,18 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 		return ;
 	for (std::vector<std::string>::iterator flagsIt = flags.begin(); flagsIt != flags.end(); flagsIt++)
 	{
-		std::string			flagsItStr = *flagsIt;
-		std::string			strTarget;
-		Client				*target;
-		chanUser			*cu;
-		std::string			limitStr;
-		std::istringstream	limitIss;
-		int					limitValue;
+		std::string									flagsItStr = *flagsIt;
+		std::string									strTarget;
+		Client										*target;
+		chanUser									*cu;
+		// for l
+		std::string									limitStr;
+		std::istringstream							limitIss;
+		int											limitValue;
+		// for o
+		std::map<std::string, chanUser>				clients;
+		std::map<std::string, chanUser>::iterator	clientsIt;
+		std::string									names;
 		switch (flagsItStr[1])
 		{
 			case 'i' :
@@ -156,6 +161,22 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					*cu->isOp = true;
 				else
 					*cu->isOp = false;
+				clients = channel->getClients();
+				for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
+				{
+					if (clientsIt != clients.begin())
+						names.append(" ");
+					if (*clientsIt->second.isOp)
+						names.append("@");
+					names.append(clientsIt->first);
+				}
+				for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
+				{
+					Server::sendToClient(clientsIt->second.client->fd, \
+						RPL_NAMREPLY(clientsIt->second.client->nick, "=", channel->getName(), names));
+					Server::sendToClient(clientsIt->second.client->fd, \
+						RPL_ENDOFNAMES(clientsIt->second.client->nick, channel->getName()));
+				}
 				break ;
 			case 'l' :
 				if (flagsItStr[0] == '+')

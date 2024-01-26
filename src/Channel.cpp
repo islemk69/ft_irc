@@ -136,7 +136,7 @@ void			Channel::setClientLimit(int limit)
 
 void			Channel::updateClient(std::string oldNick, std::string newNick)
 {
-	chanUser	temp;
+	chanUser									temp;
 	std::map<std::string, chanUser>::iterator	it = this->_chanUsers.find(oldNick);
 
 	if (it != this->_chanUsers.end())
