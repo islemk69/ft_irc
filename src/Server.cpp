@@ -8,7 +8,6 @@ Server::Server(std::string port, std::string password){
 	}
     std::istringstream iss(port);
     int portNumber;
-    //on met le iss dans le port number
     iss >> portNumber;
     if (iss.fail() || portNumber < 1 || portNumber > 65535)
         throw std::invalid_argument("Error wrong port number");
@@ -84,6 +83,7 @@ void Server::execServer(){
             this->_fds.back().events = POLLIN; 
         }
     }
+
     for (size_t i = 1; i < this->_fds.size(); ++i) {
         if (this->_fds[i].revents & POLLIN) {
             this->readClientRequest(i);
@@ -112,6 +112,7 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
     while (terminator != std::string::npos) {
         //on recupere la partie du message en coupant a partir de pos (0 pour le premier coup) jusqua terminator
         std::string cmdBuffer = msgBuffer.substr(pos, terminator + 2 - pos);
+        std::cout << "Cmd Buffer execute cmd :" << cmdBuffer <<  ":" << std::endl;
         Command cmd(cmdBuffer);
 
         if (cmdBuffer == "CAP LS 302\r\n"){
