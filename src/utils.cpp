@@ -12,7 +12,7 @@
 
 #include "../includes/utils.hpp"
 
-std::vector<std::string> ft_split(const std::string &msg, const std::string &delim, int flg)
+std::vector<std::string> ft_split(const std::string &msg, const std::string &delim)
 {
     std::vector<std::string> res;
     std::string token = "";
@@ -33,7 +33,7 @@ std::vector<std::string> ft_split(const std::string &msg, const std::string &del
                 i += delim.size() - 1;
             }
         }
-        else if (msg[i] == '\n') // Ajout de la vérification pour '\n'
+        else if (msg[i] == '\n' && !msg[i + 1]) // Ajout de la vérification pour '\n'
         {
             if (token.size() > 0)
             {
@@ -61,7 +61,8 @@ std::vector<std::string> ft_split(const std::string &msg, const std::string &del
     return res;
 }
 
-std::vector<std::string> ft_split2(std::string &msg, const std::string &delim, int flg)
+
+std::vector<std::string> ft_split2(std::string &msg, const std::string &delim)
 {
     std::vector<std::string> res;
     std::string token = "";
@@ -82,7 +83,7 @@ std::vector<std::string> ft_split2(std::string &msg, const std::string &delim, i
                 i += delim.size() - 1;
             }
         }
-        else if (msg[i] == '\n') // Ajout de la vérification pour '\n'
+        else if (msg[i] == '\n' && !msg[i + 1]) // Ajout de la vérification pour '\n'
         {
             if (token.size() > 0)
             {
@@ -99,7 +100,6 @@ std::vector<std::string> ft_split2(std::string &msg, const std::string &delim, i
             }
         }
 		else if (msg[i] == '\r') {
-					std::cout << "HUGOOOOOO" << std::endl;
 			msg[i] = '\n';
 		}
         else

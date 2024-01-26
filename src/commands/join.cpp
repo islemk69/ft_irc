@@ -30,10 +30,10 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, "Error not registered\r\n");
 		return ;
 	}
-	std::vector<std::string>	channels = ft_split(command.args[0], ",", 1);
+	std::vector<std::string>	channels = ft_split(command.args[0], ",");
 	std::vector<std::string>	keys;
 	if (command.args.size() > 1)
-		keys = ft_split(command.args[1], ",", 0);
+		keys = ft_split(command.args[1], ",");
 	std::vector<std::string>::iterator	keyIt = keys.begin();
 	for(std::vector<std::string>::iterator chanIt = channels.begin(); chanIt != channels.end(); chanIt++)
 	{
