@@ -35,22 +35,34 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 		if (*clientsIt->second.isOp)
 			nOp++;
 	}
-	if (*cu->isOp && nOp == 1)
+	if (*cu->isOp && nOp == 1 && clients.size() > 1)
 	{
+		time_t		shortest;
+		std::string	newOp;
+
 		clientsIt = clients.begin();
-		if (clientsIt->first == cu->client->nick)
+		if (clientsIt->first == this->nick)
 			clientsIt++;
-		if (clients.size() > 1)
+		shortest = clientsIt->second.joinTime;
+		newOp = clientsIt->first;
+		for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
 		{
-			cu = channel->getClientByNick(clientsIt->first);
-			if (cu)
-				*cu->isOp = true;
+			if (clientsIt->first == this->nick)
+				continue ;
+			if (clientsIt->second.joinTime < shortest)
+			{
+				shortest = clientsIt->second.joinTime;
+				newOp = clientsIt->first;
+			}
 		}
+		cu = channel->getClientByNick(newOp);
+		*cu->isOp = true;
 	}
 	channel->sendToAll(RPL_CMD(this->nick, this->user, "PART", (channel->getName() + " " + cause)));
 	this->eraseChannel(channel->getName());
 	channel->eraseClient(this->nick);
 	clients = channel->getClients();
+
 	for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
 	{
 		if (clientsIt != clients.begin())
@@ -59,6 +71,7 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 			names.append("@");
 		names.append(clientsIt->first);
 	}
+
 	for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
 	{
 		Server::sendToClient(clientsIt->second.client->fd, \
@@ -66,7 +79,8 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 		Server::sendToClient(clientsIt->second.client->fd, \
 			RPL_ENDOFNAMES(clientsIt->second.client->nick, channel->getName()));
 	}
-	if (channel->getClients().size() == 0)
+
+	if (channel->getClients().empty())
 		server->rmChannel(channel);
 }
 

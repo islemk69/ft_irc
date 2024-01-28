@@ -8,6 +8,7 @@ Channel::Channel(std::string name, Client *client){
 	newUser.client = client;
 	newUser.isOp = new bool;
 	*newUser.isOp = true;
+	time(&newUser.joinTime);
 	this->_chanUsers[client->nick] = newUser;
 }
 
@@ -92,6 +93,7 @@ void			Channel::addClient(Client *client)
 	newUser.client = client;
 	newUser.isOp = new bool;
 	*newUser.isOp = false;
+	time(&newUser.joinTime);
 	this->_chanUsers[client->nick] = newUser;
 }
 

@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: charlie <charlie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 13:23:58 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 18:37:24 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/28 17:30:04 by charlie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-#include "Client.hpp"
+# include "Client.hpp"
+# include <time.h>
 
 class Server;
 class Client;
@@ -22,6 +23,7 @@ typedef struct t_chanUser
 {
     Client	*client;
     bool	*isOp;
+	time_t	joinTime;
 }	chanUser;
 
 class Channel {
