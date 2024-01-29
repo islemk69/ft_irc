@@ -162,8 +162,8 @@ void Server::readClientRequest(int i) {
 
             // //delete client
             // //delete channel if nbUser == 1
-            this->_fds.erase(this->_fds.begin() + i);
-			close(this->_fds[i].fd);
+            this->_fds.erase(this->_fds.begin() + i - 1);
+			close(this->_fds[i - 1].fd);
             return;
         }
 

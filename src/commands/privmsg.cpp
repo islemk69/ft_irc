@@ -6,25 +6,20 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/24 17:28:19 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:32:17 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/commands.hpp"
 #include "../../includes/utils.hpp"
 
-std::string joinStr(std::vector<std::string> args) {
-	std::string finalString;
-	for (int i = 1; i < args.size(); i++) {
-		finalString += args[i];
-		if (i != args.size() - 1)
-			finalString += ' ';
-	}
-	return (finalString);
-}
-
 void	privmsgCmd(Client *client, const Command &command, Server *server)
 {
+	if (!client->isRegistered)
+	{
+		Server::sendToClient(client->fd, ERR_NOTREGISTERED("Client"));
+		return ;
+	}
 	if (command.args.empty())
 	{
 		Server::sendToClient(client->fd, ERR_NORECIPIENT(client->nick, command.command));

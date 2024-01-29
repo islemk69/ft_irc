@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 18:40:20 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:33:19 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ void	topicCmd(Client *client, const Command &command, Server *server)
 		channel->sendToAll(RPL_CMD(client->nick, client->user, "TOPIC", channel->getName() + " :"));
 		return ;
 	}
-	std::string	newTopic = command.args[1];
-	if (newTopic[0] == ':')
-		newTopic.erase(0, 1);
-	channel->setTopic(newTopic);
+	std::string completeTopic = joinStr(command.args);
+	if (completeTopic[0] == ':')
+		completeTopic.erase(0, 1);
+	channel->setTopic(completeTopic);
 	channel->sendToAll(RPL_CMD(client->nick, client->user, "TOPIC", channel->getName() + " :" + channel->getTopic()));
 }

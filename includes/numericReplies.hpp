@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 17:19:04 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/23 16:51:27 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:27:55 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,6 @@
 
 // ---- NUMERICS : RPL_* ----
 
-# define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 302 " \
-	+ nick + " " + channel + " :" + topic + "\r\n")
-
 # define RPL_ENDOFWHO(nick, mask) (":" + SERVER_NAME + " 315 " \
 	+ nick + " " + mask + " :End of WHO list\r\n")
 
@@ -43,6 +40,9 @@
 
 # define RPL_NOTOPIC(nick, channel) (":" + SERVER_NAME + " 331 " \
 	+ nick + " " + channel + " :No topic is set\r\n")
+
+# define RPL_TOPIC(nick, channel, topic) (":" + SERVER_NAME + " 332 " \
+	+ nick + " " + channel + " :" + topic + "\r\n")
 
 # define RPL_INVITING(nick, target, channel) (":" + SERVER_NAME + " 341 " \
 	+ nick + " " + target + " " + channel + "\r\n")
@@ -100,6 +100,9 @@
 
 # define ERR_USERONCHANNEL(nick, target, channel) (":" + SERVER_NAME + " 443 " \
 	+ nick + " " + target + " " + channel + " :is already on channel\r\n")
+	
+# define ERR_NOTREGISTERED(nick) (":" + SERVER_NAME + " 451 " \
+	+ nick + " :You have not registered\r\n")
 
 # define ERR_NEEDMOREPARAMS(nick, command) (":" + SERVER_NAME + " 461 " \
 	+ nick + " " + command + " :Not enough parameters\r\n")

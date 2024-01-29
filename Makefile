@@ -48,7 +48,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS) ${HEAD}
 	@echo "$(GREEN)Program compiling...$(RESET)"
-	@$(CC) $(OBJS) -o $(NAME)
+	@$(CC) ${FLAGS} $(OBJS) -o $(NAME)
 	@echo "$(GREEN)Compilation complete.$(RESET)"
 
 $(OBJS_DIR):
@@ -66,5 +66,8 @@ fclean: clean
 	@echo "$(RED)Removed executable.$(RESET)"
 
 re: fclean all
+
+run:	$(NAME)
+		./ircserv 6667 pass
 
 .PHONY: all clean fclean re
