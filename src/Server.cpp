@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/29 13:28:38 by ccrottie          #+#    #+#             */
+/*   Updated: 2024/01/29 13:30:29 by ccrottie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/Server.hpp"
 #include "../includes/numericReplies.hpp"
 #include <string>
@@ -65,8 +77,6 @@ void Server::initCommand(){
 	this->_cmds["BOT"] = &botCmd;
 }
 
-int iter = 0; //DEBUG
-
 void Server::execServer(){
     if (poll(&this->_fds[0], this->_fds.size(), -1) == -1 && sig::stopServer == false) { 
         throw std::runtime_error("Error in poll");
@@ -76,8 +86,6 @@ void Server::execServer(){
         int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
             Client* newClient = new Client(fdClient);//LEAK
-            std::cout << "Client n " << iter << ", fd ----> " << newClient->fd << std::endl; // DEBUG
-            iter++; //DEBUG
             this->_clients[fdClient] = newClient;
             this->_fds.push_back(pollfd()); 
             this->_fds.back().fd = fdClient; 
@@ -166,10 +174,6 @@ void Server::readClientRequest(int i) {
 
         accumulatedData += std::string(buffer, bytesRead);
     }
-    //hexchatic
-	std::cout << accumulatedData << std::endl;
-
-
     executeCmd(client, accumulatedData, i);
 }
 

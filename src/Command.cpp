@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Command.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/29 13:27:22 by ccrottie          #+#    #+#             */
+/*   Updated: 2024/01/29 13:54:37 by ccrottie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/Command.hpp"
 #include "../includes/utils.hpp"
 #include "../includes/Server.hpp"
@@ -28,8 +40,7 @@ Command::Command(std::string msg) : isValid(true)
     }
 
     this->command = splitCmd[0];
-    splitCmd.erase(splitCmd.begin()); //erase the first element
-    //iterate over the string 
+    splitCmd.erase(splitCmd.begin());
     std::string::iterator it;
     for (it = this->command.begin(); it != this->command.end(); it++) {
         if (!std::isalnum(*it)) {
@@ -41,7 +52,6 @@ Command::Command(std::string msg) : isValid(true)
 
     std::vector<std::string>::iterator itVec;
     for (itVec = splitCmd.begin(); itVec != splitCmd.end(); itVec++) {
-        std::cout << *itVec << std::endl;
         this->args.push_back(*itVec);
     }
 }

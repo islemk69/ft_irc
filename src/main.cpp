@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/29 13:28:32 by ccrottie          #+#    #+#             */
+/*   Updated: 2024/01/29 13:30:38 by ccrottie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/Server.hpp"
 
 void printLoadingAnimation() {
@@ -31,7 +43,6 @@ int main(int argc, char **argv) {
         }
 		if (sig::stopServer == true)
 		{
-			std::cout << "EXIT" << std::endl;
 			int									i = 0;
 			std::map<int, Client*>				clients = server.getClients();
 			std::map<int, Client*>::iterator	clientsIt;

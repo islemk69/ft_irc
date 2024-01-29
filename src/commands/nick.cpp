@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:16:20 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/26 15:40:49 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:24:02 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ bool	isNickValid(std::string nick)
 	if (nick.find_first_of(forbiddenAll) != std::string::npos)
 		return false;
 	if (forbiddenFirst.find(nick[0]) != std::string::npos)
+		return false;
+	if (nick == "bot")
 		return false;
 	return true;
 }
