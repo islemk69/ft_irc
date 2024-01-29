@@ -67,8 +67,8 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 				newChan->addMode('k');
 				newChan->setKey(*keyIt);
 			}
-			server->addChannel(newChan);
-			client->addChannel(newChan);
+			// server->addChannel(newChan);
+			// client->addChannel(newChan);
 			Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, "JOIN", newChan->getName()));
 			Server::sendToClient(client->fd, RPL_NAMREPLY(client->nick, "=", *chanIt, "@" + client->nick));
 			Server::sendToClient(client->fd, RPL_ENDOFNAMES(client->nick, *chanIt));

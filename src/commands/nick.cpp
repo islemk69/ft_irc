@@ -37,7 +37,7 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NONICKNAMEGIVEN(std::string("Client")));
 		return ;
 	}
-	if (command.args.size() > 1 || !isNickValid(command.args[0]))
+	if ((command.args.size() > 1 || !isNickValid(command.args[0])) && command.args[1] != server->getPassBot())
 	{
 		Server::sendToClient(client->fd, ERR_ERRONEUSNICKNAME(command.args[0]));
 		return ;

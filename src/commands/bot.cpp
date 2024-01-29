@@ -1,68 +1,88 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   bot.cpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/29 13:27:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:27:56 by ccrottie         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include <iostream>
+#include <cstring>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
-#include "../../includes/commands.hpp"
-#include <vector>
-#include <string>
-#include <ctime>
+const char* SERVER_ADDRESS = "127.0.0.1";
+const int SERVER_PORT = 6667;
+const char* NICKNAME = "MyBot";
+const char* USER = "myuser 0 * :My Bot";
 
-std::string getCurrentDateTime() {
-    std::time_t now = std::time(0);
-    std::tm* tm = std::localtime(&now);
+class IRCBot {
+private:
+    int ircSocket;
+    sockaddr_in serverAddress;
+    bool connected;
 
-    char buffer[80];
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm);
-
-    return std::string(buffer);
-}
-
-void botCmd(Client* client, const Command& command, Server* server) {
-    if (command.args.size() == 0)
-        Server::sendToClient(client->fd, "Veuillez rentrer une commande bot\r\n");
-
-    const char* dateKeywords[] = {
-        "time", "clock", "hour", "minute", "second", "calendar",
-        "month", "week", "year", "century", "decade",
-        "schedule", "timeline", "duration", "event", "timestamp",
-        "anniversary", "deadline", "period", "epoch", "era",
-        0  // Marqueur de fin du tableau
-    };
-
-    const char* helloKeywords[] = {
-        "hello", "hi", "hey", "greetings", "good", "morning",
-        "afternoon", "day", "howdy", "yo", "there",
-        "up", "how", "are", "you", "greet", "salutations", "hail",
-        "aloha",
-        0  // Marqueur de fin du tableau
-    };
-
-    for (std::vector<std::string>::const_iterator it = command.args.begin(); it != command.args.end(); ++it) {
-        const std::string& arg = *it;
-        for (int i = 0; dateKeywords[i]; i++) {
-            std::string myString(dateKeywords[i]);
-            // Comparer les chaînes (insensible à la casse)
-            if (myString == arg) {
-                std::string dateTime = getCurrentDateTime();
-                Server::sendToClient(client->fd, dateTime + "\r\n");
-                return ;  // Sortir de la boucle dès qu'une correspondance est trouvée
-            }
+public:
+    IRCBot(char * pass) : connected(false) {
+        ircSocket = socket(AF_INET, SOCK_STREAM, 0);
+        if (ircSocket == -1) {
+            std::cerr << "Error: Unable to create socket\n";
+            return;
         }
-		for (int i = 0; helloKeywords[i]; i++) {
-            std::string myString(helloKeywords[i]);
-            // Comparer les chaînes (insensible à la casse)
-            if (myString == arg) {
-                Server::sendToClient(client->fd, "Hellooooow \U0001F604\U0001F604\r\n");
-                return ;  // Sortir de la boucle dès qu'une correspondance est trouvée
+        serverAddress.sin_family = AF_INET;
+        serverAddress.sin_port = htons(SERVER_PORT);
+        inet_pton(AF_INET, SERVER_ADDRESS, &serverAddress.sin_addr);
+
+        if (connect(ircSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1) {
+            std::cerr << "Error: Unable to connect to IRC server\n";
+            close(ircSocket);
+            return;
+        }
+
+        char message1[512];
+		sprintf(message1, "PASS pass\r\n");
+        send(ircSocket, message1, strlen(message1), 0);
+
+		char message2[512];
+        sprintf(message2, "NICK bot %s\r\n", pass);
+        send(ircSocket, message2, strlen(message2), 0);
+
+		char message3[512];
+        send(ircSocket, message3, strlen(message3), 0);
+
+        connected = true;
+    }
+
+    bool isConnected() const {
+        return connected;
+    }
+
+    void run() {
+        char buffer[1024];
+        while (true) {
+            int bytesReceived = recv(ircSocket, buffer, sizeof(buffer), 0);
+            if (bytesReceived == -1) {
+                std::cerr << "Error receiving data from server\n";
+                break;
+            } else if (bytesReceived == 0) {
+                std::cerr << "Server closed connection\n";
+                break;
+            } else {
+                buffer[bytesReceived] = '\0';
+                std::cout << "Received: " << buffer;
             }
         }
     }
+
+    ~IRCBot() {
+        close(ircSocket);
+    }
+};
+
+int main(int argc, char **argv) {
+	if (argc != 2)
+		 std::cerr << "Error: Unable to create IRC bot" << std::endl;
+    IRCBot bot(argv[1]);
+    if (bot.isConnected()) {
+        bot.run();
+    } else {
+        std::cerr << "Error: Unable to create IRC bot\n";
+        return 1;
+    }
+
+    return 0;
 }

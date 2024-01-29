@@ -14,6 +14,8 @@
 #include "../includes/numericReplies.hpp"
 #include <string>
 
+
+
 Server::Server(std::string port, std::string password){
     if (port.empty() || port.find_first_not_of("0123456789") != std::string::npos) {
 		throw std::invalid_argument("Error: Wrong port format");
@@ -27,6 +29,8 @@ Server::Server(std::string port, std::string password){
     this->_port = std::atoi(port.c_str());
     if (password.empty())
         throw std::invalid_argument("Password can't be empty");
+	this->_passBot =  this->generateRandomKey(16);
+	std::cout << "Bot password : " << this->_passBot << std::endl;
     this->_password = password;
 }
 
@@ -53,7 +57,6 @@ void Server::initServer(){
         throw std::runtime_error("Error in listen");
     }
 
-    
     this->_fds.push_back(pollfd()); 
     this->_fds[0].fd = this->_serverSocket;
     this->_fds[0].events = POLLIN;
@@ -74,17 +77,18 @@ void Server::initCommand(){
     this->_cmds["WHO"] = &whoCmd;
 	this->_cmds["PART"] = &partCmd;
 	this->_cmds["QUIT"] = &quitCmd;
-	this->_cmds["BOT"] = &botCmd;
 }
+
+int flg = 0;
 
 void Server::execServer(){
     if (poll(&this->_fds[0], this->_fds.size(), -1) == -1 && sig::stopServer == false) { 
         throw std::runtime_error("Error in poll");
     }
-
     if (this->_fds[0].revents & POLLIN) { 
         int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
+			std::cout << "NOUVELLE CO" << std::endl;
             Client* newClient = new Client(fdClient);//LEAK
             this->_clients[fdClient] = newClient;
             this->_fds.push_back(pollfd()); 
@@ -254,6 +258,21 @@ std::vector<pollfd>	Server::getFds()
 {
 	return this->_fds;
 }
+
+
+std::string Server::generateRandomKey(int length) {
+    std::string charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    std::string key;
+
+    std::srand(std::time(NULL));
+
+    for (int i = 0; i < length; ++i) {
+        key += charset[std::rand() % charset.size()];
+    }
+
+    return key;
+}
+
 
 
 Server::~Server(){

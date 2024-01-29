@@ -36,6 +36,8 @@
 #include "utils.hpp"
 #include "signal.hpp"
 
+#include <ctime>
+
 
 
 # define PORT 6667
@@ -74,10 +76,12 @@ class Server{
         std::map<int, Client*>	getClients();
 		void					rmClient(Client *client);
 		void					rmChannel(Channel *channel);
+		std::string				generateRandomKey(int length);
 		std::vector<pollfd>		getFds();
-        
-
-
+		std::string				getPassBot() const {return this->_passBot;}
+        Client *getBot(){
+			return this->_botClient;
+		}
         ~Server();
 
         //typedef pour fonction de command qui prend en arguments le client une ref constante sur la commande et un pointeru sur le serveur
@@ -90,6 +94,8 @@ class Server{
         unsigned int                    _port;
         int                             _serverSocket;
 
+		Client*							_botClient;
+		std::string 					_passBot;
         std::vector<pollfd>             _fds;
         std::map<std::string, Channel*> _channels;
         std::map<int, Client*>          _clients;
