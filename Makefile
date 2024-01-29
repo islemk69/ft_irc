@@ -32,6 +32,7 @@ SRCS =	src/main.cpp \
 		src/commands/quit.cpp
 
 OBJS_DIR = .obj
+BOT_NAME = bot
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
 FLAGS =  -std=c++98 -MMD -MP -g3
@@ -62,6 +63,11 @@ $(NAME): $(OBJS) ${HEAD}
 	@$(CC) ${FLAGS} $(OBJS) -o $(NAME)
 	@echo "$(GREEN)Compilation complete.$(RESET)"
 
+$(BOT_NAME): src/Bot.cpp
+	@echo "$(GREEN)Compiling bot.cpp...$(RESET)"
+	@$(CC) ${FLAGS} src/Bot.cpp -o $(BOT_NAME)
+	@echo "$(GREEN)Compilation of bot complete.$(RESET)"
+
 $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)
 	@mkdir -p $(OBJS_DIR)/commands
@@ -73,12 +79,12 @@ clean:
 	@echo "$(RED)Cleaned up object files.$(RESET)"
 
 fclean: clean
-	@$(RM) $(NAME)
+	@$(RM) $(NAME) $(BOT_NAME)
 	@echo "$(RED)Removed executable.$(RESET)"
 
 re: fclean all
 
-run:	$(NAME)
+run:	$(NAME) 
 		./ircserv 6667 pass
 
 .PHONY: all clean fclean re

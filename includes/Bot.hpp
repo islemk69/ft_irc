@@ -1,31 +1,34 @@
+#pragma once
+
 #include <iostream>
 #include <cstring>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <cstdio>
 #include <unistd.h>
 
 const char* SERVER_ADDRESS = "127.0.0.1";
 const int SERVER_PORT = 6667;
-const char* NICKNAME = "MyBot";
 const char* USER = "myuser 0 * :My Bot";
 
-class IRCBot {
+
+class Bot {
 private:
     int ircSocket;
     sockaddr_in serverAddress;
     bool connected;
 
 public:
-    IRCBot(char * pass) : connected(false) {
+    Bot(char * pass) : connected(false) {
         ircSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (ircSocket == -1) {
             std::cerr << "Error: Unable to create socket\n";
             return;
         }
         serverAddress.sin_family = AF_INET;
-        serverAddress.sin_port = htons(SERVER_PORT);
-        inet_pton(AF_INET, SERVER_ADDRESS, &serverAddress.sin_addr);
+        serverAddress.sin_port = htons(6667);
+        inet_pton(AF_INET, "127.0.0.1", &serverAddress.sin_addr);
 
         if (connect(ircSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1) {
             std::cerr << "Error: Unable to connect to IRC server\n";
@@ -68,21 +71,7 @@ public:
         }
     }
 
-    ~IRCBot() {
+    ~Bot() {
         close(ircSocket);
     }
 };
-
-int main(int argc, char **argv) {
-	if (argc != 2)
-		 std::cerr << "Error: Unable to create IRC bot" << std::endl;
-    IRCBot bot(argv[1]);
-    if (bot.isConnected()) {
-        bot.run();
-    } else {
-        std::cerr << "Error: Unable to create IRC bot\n";
-        return 1;
-    }
-
-    return 0;
-}
