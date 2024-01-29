@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/26 15:01:12 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/29 15:31:42 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,8 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 			case 'o' :
 				strTarget = flagsItStr;
 				strTarget.erase(0, 3);
+				if (strTarget == "bot")
+					break ;
 				target = server->getClientByNick(strTarget);
 				if (!target)
 				{

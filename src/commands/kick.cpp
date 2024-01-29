@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 14:51:23 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/26 15:31:52 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/29 15:33:00 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;
 	}
+	if (command.args[1] == "bot")
+		return ;
 	Client	*target = server->getClientByNick(command.args[1]);
 	if (!target)
 	{
