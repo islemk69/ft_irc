@@ -62,6 +62,7 @@ class Server{
         std::map<int, Client*>	getClients();
 		void					rmClient(Client *client);
 		void					rmChannel(Channel *channel);
+		std::vector<pollfd>		getFds();
         
 
 

@@ -159,9 +159,6 @@ void Server::readClientRequest(int i) {
         if (bytesRead == 0) {
             Command qtCmd("QUIT :Leaving\r\n");
             quitCmd(client, qtCmd, this);
-
-            // //delete client
-            // //delete channel if nbUser == 1
             this->_fds.erase(this->_fds.begin() + i - 1);
 			close(this->_fds[i - 1].fd);
             return;
@@ -248,6 +245,11 @@ void	Server::rmChannel(Channel *channel)
 }
 
 int Server::getServerSocket(){return this->_serverSocket;}
+
+std::vector<pollfd>	Server::getFds()
+{
+	return this->_fds;
+}
 
 
 Server::~Server(){

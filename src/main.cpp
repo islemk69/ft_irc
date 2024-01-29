@@ -29,6 +29,24 @@ int main(int argc, char **argv) {
         while (sig::stopServer == false) {
             server.execServer();
         }
+		if (sig::stopServer == true)
+		{
+			std::cout << "EXIT" << std::endl;
+			int									i = 0;
+			std::map<int, Client*>				clients = server.getClients();
+			std::map<int, Client*>::iterator	clientsIt;
+			std::vector<pollfd>					fds = server.getFds();
+			
+			for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
+			{
+				Command	qtCmd("QUIT :Leaving\r\n");
+				quitCmd(clientsIt->second, qtCmd, &server);
+				fds.erase(fds.begin() + i);
+				close(fds[i].fd);
+				i++;
+			}
+			close(server.getServerSocket());
+		}
     } catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
         return 1;

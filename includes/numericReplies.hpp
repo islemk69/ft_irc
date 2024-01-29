@@ -47,7 +47,7 @@
 # define RPL_INVITING(nick, target, channel) (":" + SERVER_NAME + " 341 " \
 	+ nick + " " + target + " " + channel + "\r\n")
 
-# define RPL_WHOREPLY(client, channel, user, nick, flag, real) (":" + SERVER_NAME + " 352" \
+# define RPL_WHOREPLY(client, channel, user, nick, flag, real) (":" + SERVER_NAME + " 352 " \
 	+ client + " " + channel + " " + user + " " + LOCALHOST_IP + " " + SERVER_NAME + " " + nick \
 	+ " " + flag + " :0 " + real + "\r\n")
 
