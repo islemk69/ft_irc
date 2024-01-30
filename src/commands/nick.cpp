@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:16:20 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:24:02 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:40:00 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ bool	isNickValid(std::string nick)
 	if (nick.find_first_of(forbiddenAll) != std::string::npos)
 		return false;
 	if (forbiddenFirst.find(nick[0]) != std::string::npos)
-		return false;
-	if (nick == "bot")
 		return false;
 	return true;
 }
@@ -37,9 +35,15 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NONICKNAMEGIVEN(std::string("Client")));
 		return ;
 	}
-	if ((command.args.size() > 1 || !isNickValid(command.args[0])) && command.args[1] != server->getPassBot())
+	if ((command.args.size() > 0 && !isNickValid(command.args[0])) || \
+		(command.args.size() > 1 && command.args[0] == "bot" && command.args[1] != server->getPassBot()))
 	{
 		Server::sendToClient(client->fd, ERR_ERRONEUSNICKNAME(command.args[0]));
+		return ;
+	}
+	if (command.args.size() > 1 && command.args[0] == "bot" && command.args[1] != server->getPassBot())
+	{
+		Server::sendToClient(client->fd, std::string("Error : Bot connection refused\r\n"));
 		return ;
 	}
 	if (server->isNickUsed(client, command.args[0]))
@@ -52,6 +56,8 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 		client->isRegistered = true;
 		client->nick = command.args[0];
 		Server::sendToClient(client->fd, RPL_CMD(client->nick, "", "NICK", client->nick));
+		if (client->nick == "bot")
+			server->setBotFd(client->fd);
 	}
 	else
 	{

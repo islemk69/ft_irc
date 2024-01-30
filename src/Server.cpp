@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:28:38 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:30:29 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:25:12 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Server::Server(std::string port, std::string password){
 	this->_passBot =  this->generateRandomKey(16);
 	std::cout << "Bot password : " << this->_passBot << std::endl;
     this->_password = password;
+	this->_botFd = -2;
 }
 
 void Server::initServer(){
@@ -95,6 +96,7 @@ void Server::execServer(){
             this->_fds.back().events = POLLIN; 
         }
     }
+
     for (size_t i = 1; i < this->_fds.size(); ++i) {
         if (this->_fds[i].revents & POLLIN) {
             this->readClientRequest(i);
@@ -123,6 +125,7 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
     while (terminator != std::string::npos) {
         //on recupere la partie du message en coupant a partir de pos (0 pour le premier coup) jusqua terminator
         std::string cmdBuffer = msgBuffer.substr(pos, terminator + 2 - pos);
+        std::cout << "Cmd Buffer execute cmd :" << cmdBuffer <<  ":" << std::endl;
         Command cmd(cmdBuffer);
 
         if (cmdBuffer == "CAP LS 302\r\n"){
@@ -272,7 +275,15 @@ std::string Server::generateRandomKey(int length) {
     return key;
 }
 
+int	Server::getBotFd() const
+{
+	return this->_botFd;
+}
 
+void	Server::setBotFd(int fd)
+{
+	this->_botFd = fd;
+}
 
 Server::~Server(){
 }
