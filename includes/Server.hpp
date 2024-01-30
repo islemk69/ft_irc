@@ -26,6 +26,7 @@
 #include <poll.h>
 #include <map>
 #include <algorithm>
+#include <arpa/inet.h>
 #include <cerrno>
 #include <sstream>
 #include "Command.hpp"
