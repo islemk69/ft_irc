@@ -25,7 +25,7 @@ Bot::Bot(char *port, char *pass, char *passBot) : connected(false) {
 			::_exit(1);
 		}
         serverAddress.sin_port = htons(portNumber);
-        inet_pton(AF_INET, "127.0.0.1", &serverAddress.sin_addr);
+        serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 		
         if (connect(ircSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1) {
             std::cerr << "Error: Unable to connect to IRC server\n";
@@ -33,17 +33,17 @@ Bot::Bot(char *port, char *pass, char *passBot) : connected(false) {
             return;
         }
 		signal(SIGINT, handleCtrlC);
-        char message1[512];
-		sprintf(message1, "PASS %s\r\n", pass);
-        send(ircSocket, message1, strlen(message1), 0);
+		std::string passMsg =  "PASS ";
+		passMsg += pass;
+		passMsg += "\r\n";
+		send(ircSocket, passMsg.c_str(), passMsg.size(), 0);
 
-		char message2[512];
-        sprintf(message2, "NICK bot %s\r\n", passBot);
-        send(ircSocket, message2, strlen(message2), 0);
+		std::string nickMsg = "NICK bot ";
+		nickMsg += passBot;
+		nickMsg += "\r\n";
+		send(ircSocket, nickMsg.c_str(), nickMsg.size(), 0);
 
-		char message3[512];
 		// sprintf(message2, "NICK bot %s\r\n", passBot);"myuser 0 * :My Bot"
-        send(ircSocket, message3, strlen(message3), 0);
         connected = true;
 }
 
