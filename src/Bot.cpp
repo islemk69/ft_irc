@@ -3,9 +3,8 @@
 int ircSocket;
 
 void handleCtrlC(int signum) {
-	char message4[512];
-	sprintf(message4, "QUIT :Leaving\r\n");
-	send(ircSocket, message4, strlen(message4), 0);
+	std::string quitMsg = "QUIT :Leaving\r\n";
+	send(ircSocket, quitMsg.c_str(), quitMsg.size(), 0);
     ::_exit(0);
 }
 
