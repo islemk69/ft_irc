@@ -20,8 +20,6 @@ void handleCtrlC(int signum) {
 	sprintf(message4, "QUIT :Leaving\r\n");
 	send(ircSocket, message4, strlen(message4), 0);
     std::cerr << "Ctrl+C detected. Exiting...\n";
-	
-    // Ajoutez ici le code pour nettoyer et quitter le bot proprement
     ::_exit(0);
 }
 
