@@ -35,7 +35,7 @@ OBJS_DIR = .obj
 BOT_NAME = bot
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
-FLAGS =  -std=c++98 -MMD -MP -g3 -fsanitize=address
+FLAGS =  -std=c++98 -MMD -MP -g3 
 NAME = ircserv
 HEAD = 	includes/Server.hpp \
 		includes/Client.hpp \

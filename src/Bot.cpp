@@ -1,5 +1,14 @@
 #include "../includes/Bot.hpp"
 
+int ircSocket;
+
+void handleCtrlC(int signum) {
+	char message4[512];
+	sprintf(message4, "QUIT :Leaving\r\n");
+	send(ircSocket, message4, strlen(message4), 0);
+    ::_exit(0);
+}
+
 Bot::Bot(char *port, char *pass, char *passBot) : connected(false) {
 	ircSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (ircSocket == -1) {

@@ -38,14 +38,14 @@ void botCmd(Client* client, const Command& command, Server* server) {
         "aloha",
         0 
     };
-
+	
     for (std::vector<std::string>::const_iterator it = command.args.begin(); it != command.args.end(); ++it) {
         const std::string& arg = *it;
         for (int i = 0; dateKeywords[i]; i++) {
             std::string myString(dateKeywords[i]);
             if (myString == arg) {
                 std::string dateTime = getCurrentDateTime();
-                Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, \
+                Server::sendToClient(client->fd, RPL_CMD(std::string("bot"), std::string("bot"), \
 				"PRIVMSG", ": " + dateTime));
                 break; 
             }
@@ -53,7 +53,7 @@ void botCmd(Client* client, const Command& command, Server* server) {
 		for (int i = 0; helloKeywords[i]; i++) {
             std::string myString2(helloKeywords[i]);
             if (myString2 == arg) {
-                Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, \
+                Server::sendToClient(client->fd, RPL_CMD(std::string("bot"), std::string("bot"), \
 				"PRIVMSG", ": " + "Hellooo \U0001F600"));
                 break; 
             }
