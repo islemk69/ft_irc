@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:28:38 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/30 13:25:12 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 14:30:03 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,6 +283,10 @@ int	Server::getBotFd() const
 void	Server::setBotFd(int fd)
 {
 	this->_botFd = fd;
+}
+std::map<std::string, Channel*>	Server::getChannels() const
+{
+	return this->_channels;
 }
 
 Server::~Server(){

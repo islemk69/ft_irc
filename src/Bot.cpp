@@ -68,7 +68,7 @@ Bot::~Bot() {
 
 int main(int argc, char **argv) {
 	if (argc != 4){
-		 std::cerr << "Error: Unable to create IRC bot" << std::endl;
+		 std::cerr << "./bot <port> <pass> <key>" << std::endl;
 		 return 1;
 	}
     Bot bot(argv[1], argv[2], argv[3]);

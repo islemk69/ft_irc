@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:27:42 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/30 13:24:26 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 14:29:33 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,28 +60,29 @@ class Server{
 
         Server(Server &cpy);
         Server(std::string port, std::string password);
-        void        			initServer();
-        void        			initCommand();
-        void        			execServer();
-        int						getServerSocket();
-        void            		readClientRequest(int i);
-        static void     		sendToClient(int fd, const std::string &content);
-        Client 					*getClientByNick(const std::string &nick);
-        Client      			*getClientFromFd(int fd);
-        void        			addChannel(Channel *newChannel);
-        Channel     			*getChannelByName(const std::string& name);
-        std::string 			getPassword()const;
-		void					updateClient(std::string oldNick, std::string newNick);	
-		bool   					isNickUsed(Client *client, std::string nick);
-        void        			executeCmd(Client * client, std::string & msgBuffer, int i);
-        std::map<int, Client*>	getClients();
-		void					rmClient(Client *client);
-		void					rmChannel(Channel *channel);
-		std::string				generateRandomKey(int length);
-		std::vector<pollfd>		getFds();
-		std::string				getPassBot() const {return this->_passBot;}
-		int						getBotFd() const;
-		void					setBotFd(int fd);
+        void        					initServer();
+        void        					initCommand();
+        void        					execServer();
+        int								getServerSocket();
+        void            				readClientRequest(int i);
+        static void     				sendToClient(int fd, const std::string &content);
+        Client 							*getClientByNick(const std::string &nick);
+        Client      					*getClientFromFd(int fd);
+        void        					addChannel(Channel *newChannel);
+        Channel     					*getChannelByName(const std::string& name);
+        std::string 					getPassword()const;
+		void							updateClient(std::string oldNick, std::string newNick);	
+		bool   							isNickUsed(Client *client, std::string nick);
+        void        					executeCmd(Client * client, std::string & msgBuffer, int i);
+        std::map<int, Client*>			getClients();
+		void							rmClient(Client *client);
+		void							rmChannel(Channel *channel);
+		std::string						generateRandomKey(int length);
+		std::vector<pollfd>				getFds();
+		std::string						getPassBot() const {return this->_passBot;}
+		int								getBotFd() const;
+		void							setBotFd(int fd);
+		std::map<std::string, Channel*>	getChannels() const;
         Client *getBot(){
 			return this->_botClient;
 		}

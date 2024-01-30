@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 16:16:20 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/30 13:40:00 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 14:35:38 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,32 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 		client->nick = command.args[0];
 		Server::sendToClient(client->fd, RPL_CMD(client->nick, "", "NICK", client->nick));
 		if (client->nick == "bot")
+		{
 			server->setBotFd(client->fd);
+
+			std::map<std::string, Channel*>				serverChans = server->getChannels();
+			std::map<std::string, Channel*>::iterator	serverChanIt;
+
+			for (serverChanIt = serverChans.begin(); serverChanIt != serverChans.end(); serverChanIt++)
+			{
+				Channel	*toJoin = serverChanIt->second;
+				std::string	joinCmdStr = "JOIN " + serverChanIt->first;
+				if (toJoin->hasMode('k'))
+					joinCmdStr += " " + toJoin->getKey();
+				Command		jCmd(joinCmdStr);
+				joinCmd(client, jCmd, server);
+			}
+		}
 	}
 	else
 	{
 		Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, "NICK", command.args[0]));
-		std::map<std::string, Channel* >	channels = client->getChannels();
-		for (std::map<std::string, Channel* >::iterator chanIt = channels.begin(); chanIt != channels.end(); chanIt++)
+		std::map<std::string, Channel* >	clientChans = client->getChannels();
+		for (std::map<std::string, Channel* >::iterator clientChanIt = clientChans.begin(); \
+			clientChanIt != clientChans.end(); clientChanIt++)
 		{
-			chanIt->second->updateClient(client->nick, command.args[0]);
-			std::map<std::string, chanUser>	channelClients = chanIt->second->getClients();
+			clientChanIt->second->updateClient(client->nick, command.args[0]);
+			std::map<std::string, chanUser>	channelClients = clientChanIt->second->getClients();
 			for (std::map<std::string, chanUser>::iterator clientIt = channelClients.begin(); \
 				clientIt != channelClients.end(); clientIt++)
 			{
