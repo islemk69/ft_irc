@@ -22,7 +22,6 @@ Server::Server(std::string port, std::string password){
 	}
     std::istringstream iss(port);
     int portNumber;
-    //on met le iss dans le port number
     iss >> portNumber;
     if (iss.fail() || portNumber < 1 || portNumber > 65535)
         throw std::invalid_argument("Error wrong port number");

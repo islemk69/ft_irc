@@ -1,18 +1,16 @@
-bot: src/Bot.cpp src/../includes/Bot.hpp src/../includes/Server.hpp \
-  src/../includes/Command.hpp src/../includes/commands.hpp \
-  src/../includes/utils.hpp src/../includes/Client.hpp \
+.obj/utils.o: src/utils.cpp src/../includes/utils.hpp \
+  src/../includes/Server.hpp src/../includes/Command.hpp \
+  src/../includes/commands.hpp src/../includes/Client.hpp \
   src/../includes/Channel.hpp src/../includes/numericReplies.hpp \
   src/../includes/signal.hpp
 
-src/../includes/Bot.hpp:
+src/../includes/utils.hpp:
 
 src/../includes/Server.hpp:
 
 src/../includes/Command.hpp:
 
 src/../includes/commands.hpp:
-
-src/../includes/utils.hpp:
 
 src/../includes/Client.hpp:
 
