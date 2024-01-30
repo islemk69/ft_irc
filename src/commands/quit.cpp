@@ -15,7 +15,6 @@
 void	quitCmd(Client *client, const Command &command, Server *server)
 {
 	(void) command;
-
 	client->leaveAll(server);
 	server->rmClient(client);
 }

@@ -30,7 +30,6 @@ SRCS =	src/main.cpp \
 		src/commands/who.cpp \
 		src/signal.cpp \
 		src/commands/quit.cpp
-
 OBJS_DIR = .obj
 BOT_NAME = bot
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
@@ -56,7 +55,7 @@ $(OBJS_DIR)/%.o: src/%.cpp Makefile ${HEAD} | $(OBJS_DIR)
 	@${CC} ${FLAGS} -c $< -o $@
 	@echo "$(GREEN)Compilation of $< complete.$(RESET)"
 
-all: $(NAME)
+all: $(NAME) $(BOT_NAME)
 
 $(NAME): $(OBJS) ${HEAD}
 	@echo "$(GREEN)Program compiling...$(RESET)"

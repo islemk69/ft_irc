@@ -7,15 +7,27 @@
 #include <arpa/inet.h>
 #include <cstdio>
 #include <unistd.h>
+#include <csignal>
 
 const char* SERVER_ADDRESS = "127.0.0.1";
 const int SERVER_PORT = 6667;
 const char* USER = "myuser 0 * :My Bot";
 
+int ircSocket;
+
+void handleCtrlC(int signum) {
+	char message4[512];
+	sprintf(message4, "QUIT :Leaving\r\n");
+	send(ircSocket, message4, strlen(message4), 0);
+    std::cerr << "Ctrl+C detected. Exiting...\n";
+	
+    // Ajoutez ici le code pour nettoyer et quitter le bot proprement
+    ::_exit(0);
+}
 
 class Bot {
+
 private:
-    int ircSocket;
     sockaddr_in serverAddress;
     bool connected;
 
@@ -29,13 +41,13 @@ public:
         serverAddress.sin_family = AF_INET;
         serverAddress.sin_port = htons(6667);
         inet_pton(AF_INET, "127.0.0.1", &serverAddress.sin_addr);
-
+		
         if (connect(ircSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1) {
             std::cerr << "Error: Unable to connect to IRC server\n";
             close(ircSocket);
             return;
         }
-
+		signal(SIGINT, handleCtrlC);
         char message1[512];
 		sprintf(message1, "PASS pass\r\n");
         send(ircSocket, message1, strlen(message1), 0);
@@ -46,8 +58,8 @@ public:
 
 		char message3[512];
         send(ircSocket, message3, strlen(message3), 0);
-
         connected = true;
+		
     }
 
     bool isConnected() const {
