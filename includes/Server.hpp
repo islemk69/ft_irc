@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:27:42 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:27:43 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:24:26 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ class Server{
 		std::string				generateRandomKey(int length);
 		std::vector<pollfd>		getFds();
 		std::string				getPassBot() const {return this->_passBot;}
+		int						getBotFd() const;
+		void					setBotFd(int fd);
         Client *getBot(){
 			return this->_botClient;
 		}
@@ -93,6 +95,7 @@ class Server{
 
         unsigned int                    _port;
         int                             _serverSocket;
+		int								_botFd;
 
 		Client*							_botClient;
 		std::string 					_passBot;

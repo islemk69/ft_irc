@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:28:38 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:30:29 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:25:12 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ Server::Server(std::string port, std::string password){
 	this->_passBot =  this->generateRandomKey(16);
 	std::cout << "Bot password : " << this->_passBot << std::endl;
     this->_password = password;
+	this->_botFd = -2;
 }
 
 void Server::initServer(){
@@ -273,7 +274,15 @@ std::string Server::generateRandomKey(int length) {
     return key;
 }
 
+int	Server::getBotFd() const
+{
+	return this->_botFd;
+}
 
+void	Server::setBotFd(int fd)
+{
+	this->_botFd = fd;
+}
 
 Server::~Server(){
 }

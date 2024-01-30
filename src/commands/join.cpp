@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:35:55 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/26 16:28:45 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:49:12 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,19 @@ void	joinCmd(Client *client, const Command &command, Server *server)
 				newChan->addMode('k');
 				newChan->setKey(*keyIt);
 			}
-			// server->addChannel(newChan);
-			// client->addChannel(newChan);
+			server->addChannel(newChan);
+			client->addChannel(newChan);
+
+			Client		*bot = server->getClientFromFd(server->getBotFd());
+			std::string	joinCmdStr = "JOIN " + *chanIt;
+			if (keyIt != keys.end())
+				joinCmdStr += " " + *keyIt;
+			Command		jCmd(joinCmdStr);
+			joinCmd(bot, jCmd, server);
+			
 			Server::sendToClient(client->fd, RPL_CMD(client->nick, client->user, "JOIN", newChan->getName()));
 			Server::sendToClient(client->fd, RPL_NAMREPLY(client->nick, "=", *chanIt, "@" + client->nick));
+			Server::sendToClient(client->fd, RPL_NAMREPLY("bot", "=", *chanIt, "bot"));
 			Server::sendToClient(client->fd, RPL_ENDOFNAMES(client->nick, *chanIt));
 			continue ;
 		}
