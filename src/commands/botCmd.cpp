@@ -11,8 +11,16 @@ std::string getCurrentDateTime() {
 }
 
 void botCmd(Client* client, const Command& command, Server* server) {
-	if (!client->isRegistered)
+	if (server->getBotFd() < 0){
+		Server::sendToClient(client->fd, "No bot connected, please retry later\r\n");
+		return ;
+	}
+		
+	if (!client->isRegistered){
 		Server::sendToClient(client->fd, "Please register\r\n");
+		return ;
+	}
+		
 	std::cout << "BOT DETECTE" << std::endl;
     if (command.args.size() == 0)
         Server::sendToClient(client->fd, "Please enter a bot command\r\n");
