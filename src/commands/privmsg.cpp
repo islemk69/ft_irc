@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:29:46 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:29:45 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:43:15 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	privmsgCmd(Client *client, const Command &command, Server *server)
 		{
 			std::string targetName = *it;
 			Client		*target = server->getClientByNick(targetName);
-			if (!target)
+			if (!target || targetName == "bot")
 			{
 				Server::sendToClient(client->fd, ERR_NOSUCHNICK(client->nick, targetName));
 				continue ;

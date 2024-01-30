@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:27:17 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/30 17:11:31 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:19:26 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,10 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 		cu = channel->getClientByNick(newOp);
 		*cu->isOp = true;
 	}
-	std::cout << "coucou1" << std::endl;
 	channel->sendToAll(RPL_CMD(this->nick, this->user, "PART", (channel->getName() + " " + cause)));
 	this->eraseChannel(channel->getName());
 	channel->eraseClient(this->nick);
 	
-	std::cout << "coucou2" << std::endl;
-
 	clients = channel->getClients();
 	for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
 	{

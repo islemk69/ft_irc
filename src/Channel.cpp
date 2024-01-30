@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:27:01 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:27:04 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:18:04 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,8 @@ void            Channel::sendToAll(const std::string &msg)
 	for (std::map<std::string, chanUser>::iterator it = this->_chanUsers.begin(); \
 		it != this->_chanUsers.end(); it++)
 	{
-		Server::sendToClient(it->second.client->fd, msg);
+		if (it->first != "bot")
+			Server::sendToClient(it->second.client->fd, msg);
 	}
 }
 

@@ -6,7 +6,7 @@
 #    By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/29 13:28:53 by ccrottie          #+#    #+#              #
-#    Updated: 2024/01/30 17:14:19 by ccrottie         ###   ########.fr        #
+#    Updated: 2024/01/30 17:27:14 by ccrottie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,9 +64,16 @@ $(NAME): $(OBJS) ${HEAD}
 	@$(CC) ${FLAGS} $(OBJS) -o $(NAME)
 	@echo "$(GREEN)Compilation complete.$(RESET)"
 
-$(BOT_NAME): src/Bot.cpp
+$(OBJS_DIR)/Bot.o:	src/Bot.cpp
 	@echo "$(GREEN)Compiling bot.cpp...$(RESET)"
+	@${CC} ${FLAGS} -c $< -o $@
+	@echo "$(GREEN)Compilation of $< complete.$(RESET)"
+	
+
+$(BOT_NAME): $(OBJS_DIR)/Bot.o
+	@echo "$(GREEN)Bot compiling...$(RESET)"
 	@$(CC) ${FLAGS} src/Bot.cpp src/utils.cpp -o $(BOT_NAME)
+	@$(RM) bot.d
 	@echo "$(GREEN)Compilation of bot complete.$(RESET)"
 
 $(OBJS_DIR):

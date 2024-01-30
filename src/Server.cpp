@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:28:38 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/30 14:30:03 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:40:50 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void Server::execServer(){
     if (this->_fds[0].revents & POLLIN) { 
         int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
-			std::cout << "NOUVELLE CO" << std::endl;
+			std::cout << "NOUVELLE CO = " << fdClient << std::endl;
             Client* newClient = new Client(fdClient);//LEAK
             this->_clients[fdClient] = newClient;
             this->_fds.push_back(pollfd()); 
@@ -287,6 +287,12 @@ void	Server::setBotFd(int fd)
 std::map<std::string, Channel*>	Server::getChannels() const
 {
 	return this->_channels;
+}
+
+void	Server::eraseCloseFd(size_t i)
+{
+	this->_fds.erase(this->_fds.begin() + i);
+	close(this->_fds[i].fd);
 }
 
 Server::~Server(){
