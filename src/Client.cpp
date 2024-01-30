@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:27:17 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:27:18 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:11:31 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,19 +47,19 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 		if (*clientsIt->second.isOp)
 			nOp++;
 	}
-	if (*cu->isOp && nOp == 1 && clients.size() > 1)
+	if (*cu->isOp && nOp == 1 && clients.size() > 2)
 	{
 		time_t		shortest;
 		std::string	newOp;
 
 		clientsIt = clients.begin();
-		if (clientsIt->first == this->nick)
+		while (clientsIt->first == this->nick || clientsIt->first == "bot")
 			clientsIt++;
 		shortest = clientsIt->second.joinTime;
 		newOp = clientsIt->first;
 		for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
 		{
-			if (clientsIt->first == this->nick)
+			if (clientsIt->first == this->nick || clientsIt->first == "bot")
 				continue ;
 			if (clientsIt->second.joinTime < shortest)
 			{
@@ -70,11 +70,14 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 		cu = channel->getClientByNick(newOp);
 		*cu->isOp = true;
 	}
+	std::cout << "coucou1" << std::endl;
 	channel->sendToAll(RPL_CMD(this->nick, this->user, "PART", (channel->getName() + " " + cause)));
 	this->eraseChannel(channel->getName());
 	channel->eraseClient(this->nick);
-	clients = channel->getClients();
+	
+	std::cout << "coucou2" << std::endl;
 
+	clients = channel->getClients();
 	for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
 	{
 		if (clientsIt != clients.begin())
