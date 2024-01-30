@@ -29,7 +29,8 @@ SRCS =	src/main.cpp \
 		src/commands/part.cpp \
 		src/commands/who.cpp \
 		src/signal.cpp \
-		src/commands/quit.cpp
+		src/commands/quit.cpp \
+		src/commands/botCmd.cpp
 OBJS_DIR = .obj
 BOT_NAME = bot
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
@@ -64,7 +65,7 @@ $(NAME): $(OBJS) ${HEAD}
 
 $(BOT_NAME): src/Bot.cpp
 	@echo "$(GREEN)Compiling bot.cpp...$(RESET)"
-	@$(CC) ${FLAGS} src/Bot.cpp -o $(BOT_NAME)
+	@$(CC) ${FLAGS} src/Bot.cpp src/utils.cpp -o $(BOT_NAME)
 	@echo "$(GREEN)Compilation of bot complete.$(RESET)"
 
 $(OBJS_DIR):

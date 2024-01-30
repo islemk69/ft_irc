@@ -77,6 +77,7 @@ void Server::initCommand(){
     this->_cmds["WHO"] = &whoCmd;
 	this->_cmds["PART"] = &partCmd;
 	this->_cmds["QUIT"] = &quitCmd;
+	this->_cmds["BOT"] = &botCmd;
 }
 
 int flg = 0;
@@ -125,7 +126,6 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
     while (terminator != std::string::npos) {
         //on recupere la partie du message en coupant a partir de pos (0 pour le premier coup) jusqua terminator
         std::string cmdBuffer = msgBuffer.substr(pos, terminator + 2 - pos);
-        std::cout << "Cmd Buffer execute cmd :" << cmdBuffer <<  ":" << std::endl;
         Command cmd(cmdBuffer);
 
         if (cmdBuffer == "CAP LS 302\r\n"){
