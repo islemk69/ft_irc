@@ -38,7 +38,7 @@ void botCmd(Client* client, const Command& command, Server* server) {
         "aloha",
         0 
     };
-
+	
     for (std::vector<std::string>::const_iterator it = command.args.begin(); it != command.args.end(); ++it) {
         const std::string& arg = *it;
         for (int i = 0; dateKeywords[i]; i++) {

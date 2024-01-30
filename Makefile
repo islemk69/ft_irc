@@ -6,7 +6,7 @@
 #    By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/29 13:28:53 by ccrottie          #+#    #+#              #
-#    Updated: 2024/01/30 17:05:37 by ccrottie         ###   ########.fr        #
+#    Updated: 2024/01/30 17:14:19 by ccrottie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ OBJS_DIR = .obj
 BOT_NAME = bot
 OBJS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.o,$(SRCS))
 DEPS = $(patsubst src/%.cpp,$(OBJS_DIR)/%.d,$(SRCS))
+FLAGS =  -std=c++98 -MMD -MP -g3 
 FLAGS =  -std=c++98 -MMD -MP -g3
 NAME = ircserv
 HEAD = 	includes/Server.hpp \
