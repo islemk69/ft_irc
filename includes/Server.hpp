@@ -73,7 +73,7 @@ class Server{
         std::string 					getPassword()const;
 		void							updateClient(std::string oldNick, std::string newNick);	
 		bool   							isNickUsed(Client *client, std::string nick);
-        void        					executeCmd(Client * client, std::string & msgBuffer, int i);
+        void        					executeCmd(Client * client, std::string & msgBuffer);
         std::map<int, Client*>			getClients();
 		void							rmClient(Client *client);
 		void							rmChannel(Channel *channel);
