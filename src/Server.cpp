@@ -180,6 +180,7 @@ void Server::readClientRequest(int i) {
 
         accumulatedData += std::string(buffer, bytesRead);
     }
+	std::cout << "COMMAND " << accumulatedData << std::endl;
     executeCmd(client, accumulatedData, i);
 }
 

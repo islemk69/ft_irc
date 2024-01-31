@@ -48,6 +48,7 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 	}
 	if (server->isNickUsed(client, command.args[0]))
 	{
+		client->previousNick = client->previousNick.empty() ? command.args[0] : client->previousNick;
 		Server::sendToClient(client->fd, ERR_NICKNAMEINUSE(command.args[0]));
 		return ;
 	}
@@ -55,7 +56,10 @@ void	nickCmd(Client *client, const Command &command, Server *server)
 	{
 		client->isRegistered = true;
 		client->nick = command.args[0];
-		Server::sendToClient(client->fd, RPL_CMD(client->nick, "", "NICK", client->nick));
+
+		std::string	userName = client->user.empty() ? "" : client->user;
+		std::string	nickToUse = client->previousNick.empty() ? client->nick : client->previousNick;
+		Server::sendToClient(client->fd, RPL_CMD(nickToUse, userName, "NICK", client->nick));
 		if (client->nick == "bot")
 		{
 			server->setBotFd(client->fd);

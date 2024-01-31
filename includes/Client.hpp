@@ -31,6 +31,7 @@ class Client {
         ~Client();
         bool		hasPass;
         bool        isRegistered;
+		std::string	previousNick;
         std::string nick;
         std::string user;
         std::string real;
