@@ -81,6 +81,8 @@ void Server::initCommand(){
 }
 
 int flg = 0;
+int i = 0;
+
 
 void Server::execServer(){
     if (poll(&this->_fds[0], this->_fds.size(), -1) == -1 && sig::stopServer == false) { 
@@ -89,7 +91,6 @@ void Server::execServer(){
     if (this->_fds[0].revents & POLLIN) { 
         int fdClient = accept(this->_serverSocket, NULL, NULL); 
         if (fdClient != -1) { 
-			std::cout << "NOUVELLE CO = " << fdClient << std::endl;
             Client* newClient = new Client(fdClient);//LEAK
             this->_clients[fdClient] = newClient;
             this->_fds.push_back(pollfd()); 
@@ -97,13 +98,11 @@ void Server::execServer(){
             this->_fds.back().events = POLLIN; 
         }
     }
-
     for (size_t i = 1; i < this->_fds.size(); ++i) {
         if (this->_fds[i].revents & POLLIN) {
             this->readClientRequest(i);
         }
     }
-    
 }
 
 Client* Server::getClientFromFd(int fd) {
@@ -114,7 +113,7 @@ Client* Server::getClientFromFd(int fd) {
     return NULL;
 }
 
-void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
+void Server::executeCmd(Client * client, std::string & msgBuffer) {
     size_t terminator = msgBuffer.find("\r\n", 0);
 
     //si on ne trouve pas le terminator on arrete ici
@@ -137,7 +136,7 @@ void Server::executeCmd(Client * client, std::string & msgBuffer, int i) {
 
 		std::string	clientNick = client->nick.empty() ? std::string("Client") : client->nick;
         if (!cmd.isValid) {
-            Server::sendToClient(_fds[i].fd, ERR_UNKNOWNCOMMAND(clientNick, cmd.command));
+            Server::sendToClient(client->fd, ERR_UNKNOWNCOMMAND(clientNick, cmd.command));
             return ;
         }
         CmdIt it = this->_cmds.find(cmd.command);
@@ -160,7 +159,6 @@ void Server::readClientRequest(int i) {
     memset(buffer, 0, sizeof(buffer));
 	std::string accumulatedData;
     Client* client = getClientFromFd(this->_fds[i].fd);
-
 	while (accumulatedData.find("\r\n", 0) == std::string::npos) {
         ssize_t bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
         if (bytesRead == -1) {
@@ -173,15 +171,11 @@ void Server::readClientRequest(int i) {
         if (bytesRead == 0) {
             Command qtCmd("QUIT :Leaving\r\n");
             quitCmd(client, qtCmd, this);
-            this->_fds.erase(this->_fds.begin() + i - 1);
-			close(this->_fds[i - 1].fd);
             return;
         }
-
         accumulatedData += std::string(buffer, bytesRead);
     }
-	std::cout << "COMMAND " << accumulatedData << std::endl;
-    executeCmd(client, accumulatedData, i);
+    executeCmd(client, accumulatedData);
 }
 
 void Server::sendToClient(int fd, const std::string &content) {

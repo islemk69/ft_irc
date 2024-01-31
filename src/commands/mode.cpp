@@ -131,6 +131,7 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 				break ;
 			case 't' :
 				flagsItStr[0] == '+' ? channel->addMode('t') : channel->rmMode('t');
+				break ;
 			case 'k' :
 				if (flagsItStr[0] == '+')
 				{
@@ -210,6 +211,5 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 		if (i < command.args.size() - 1)
 			modeReply.append(" ");
 	}
-	std::cout << modeReply << std::endl;
 	channel->sendToAll(RPL_CMD(client->nick, client->user, "MODE", modeReply));
 }

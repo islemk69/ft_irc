@@ -16,16 +16,13 @@ void	quitCmd(Client *client, const Command &command, Server *server)
 {
 	(void) command;
 	client->leaveAll(server);
-	if (client->fd == server->getBotFd())
+	std::vector<pollfd>	fds = server->getFds();
+	for (size_t i = 0; i < fds.size(); i++)
 	{
-		std::vector<pollfd>	fds = server->getFds();
-		for (size_t i = 0; i < fds.size(); i++)
+		if (fds[i].fd == client->fd)
 		{
-			if (fds[i].fd == server->getBotFd())
-			{
-				server->eraseCloseFd(i);
-				break ;
-			}
+			server->eraseCloseFd(i);
+			break ;
 		}
 	}
 	server->rmClient(client);

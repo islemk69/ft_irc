@@ -21,7 +21,6 @@ void botCmd(Client* client, const Command& command, Server* server) {
 		return ;
 	}
 		
-	std::cout << "BOT DETECTE" << std::endl;
     if (command.args.size() == 0)
         Server::sendToClient(client->fd, "Please enter a bot command\r\n");
     const char* dateKeywords[] = {
