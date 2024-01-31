@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 15:31:42 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/31 14:28:14 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,17 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					channel->rmMode('l');
 				break ;
 			default :
-				break ;
+				return ;
 		}
-	}	
+	}
+	std::string	modeReply = "";
+
+	for (int i = 0; i < command.args.size(); i++)
+	{
+		modeReply.append(command.args[i]);
+		if (i < command.args.size() - 1)
+			modeReply.append(" ");
+	}
+	std::cout << modeReply << std::endl;
+	channel->sendToAll(RPL_CMD(client->nick, client->user, "MODE", modeReply));
 }
