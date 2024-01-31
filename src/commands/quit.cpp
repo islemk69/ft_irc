@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:57:40 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/30 17:38:36 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/31 13:46:02 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ void	quitCmd(Client *client, const Command &command, Server *server)
 {
 	(void) command;
 	client->leaveAll(server);
-	server->rmClient(client);
-	if (client->nick == "bot")
+	if (client->fd == server->getBotFd())
 	{
 		std::vector<pollfd>	fds = server->getFds();
 		for (size_t i = 0; i < fds.size(); i++)
@@ -29,4 +28,5 @@ void	quitCmd(Client *client, const Command &command, Server *server)
 			}
 		}
 	}
+	server->rmClient(client);
 }

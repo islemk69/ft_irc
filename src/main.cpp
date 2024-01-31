@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:28:32 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/29 13:30:38 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/31 13:59:24 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,18 @@ int main(int argc, char **argv) {
         }
 		if (sig::stopServer == true)
 		{
-			int									i = 0;
+			int									i;
 			std::map<int, Client*>				clients = server.getClients();
-			std::map<int, Client*>::iterator	clientsIt;
 			std::vector<pollfd>					fds = server.getFds();
+			int									clientsSize = clients.size();
 			
-			for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
+			for (i = 0; i < clientsSize; i++)
 			{
 				Command	qtCmd("QUIT :Leaving\r\n");
-				quitCmd(clientsIt->second, qtCmd, &server);
-				fds.erase(fds.begin() + i);
-				close(fds[i].fd);
-				i++;
+				quitCmd(clients.begin()->second, qtCmd, &server);
+				fds.erase(fds.begin());
+				// close(fds[i].fd);
+				clients = server.getClients();
 			}
 			close(server.getServerSocket());
 		}
