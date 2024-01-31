@@ -24,11 +24,6 @@ void	userCmd(Client *client, const Command &command, Server *server)
 		Server::sendToClient(client->fd, ERR_NEEDMOREPARAMS(client->nick, command.command));
 		return ;
 	}
-	if (command.args[1] != "0" || command.args[2] != "*")
-	{		
-		Server::sendToClient(client->fd, std::string("Error : Format : USER <username> 0 * [<realname>]\r\n"));
-		return ;
-	}
 	if (client->user.length() != 0)
 	{
 		Server::sendToClient(client->fd, ERR_ALREADYREGISTERED(client->nick));

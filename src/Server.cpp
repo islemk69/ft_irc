@@ -180,6 +180,7 @@ void Server::readClientRequest(int i) {
 
         accumulatedData += std::string(buffer, bytesRead);
     }
+	std::cout << "COMMAND " << accumulatedData << std::endl;
     executeCmd(client, accumulatedData, i);
 }
 
@@ -292,7 +293,6 @@ std::map<std::string, Channel*>	Server::getChannels() const
 void	Server::eraseCloseFd(size_t i)
 {
 	this->_fds.erase(this->_fds.begin() + i);
-	close(this->_fds[i].fd);
 }
 
 Server::~Server(){
