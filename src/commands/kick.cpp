@@ -32,7 +32,7 @@ void	kickCmd(Client *client, const Command &command, Server *server)
 		return ;
 	}
 	chanUser *cu = channel->getClientByNick(client->nick);
-	if (channel->hasMode('i') && !*cu->isOp)
+	if (cu && !*cu->isOp)
 	{
 		Server::sendToClient(client->fd, ERR_CHANOPRIVSNEEDED(client->nick, channel->getName()));
 		return ;
