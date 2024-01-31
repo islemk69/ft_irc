@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 13:27:17 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/31 13:48:32 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/31 17:52:45 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 		if (*clientsIt->second.isOp)
 			nOp++;
 	}
-	if (*cu->isOp && nOp == 1 && clients.size() > 2)
+	if (*cu->isOp && nOp == 1 && ((clients.size() > 2 && server->getBotFd() != -2) || \
+		(clients.size() > 1 && server->getBotFd() == -2)))
 	{
 		time_t		shortest;
 		std::string	newOp;
@@ -90,6 +91,14 @@ void	Client::leaveChannel(Channel *channel, std::string cause, Server *server){
 			RPL_NAMREPLY(clientsIt->second.client->nick, "=", channel->getName(), names));
 		Server::sendToClient(clientsIt->second.client->fd, \
 			RPL_ENDOFNAMES(clientsIt->second.client->nick, channel->getName()));
+	}
+
+	if (channel->getClients().size() == 1 && server->getBotFd() != -2)
+	{
+		Client	*botTarget = server->getClientByNick("bot");
+		
+		botTarget->eraseChannel(channel->getName());
+		channel->eraseClient(botTarget->nick);
 	}
 
 	if (channel->getClients().empty())

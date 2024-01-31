@@ -6,7 +6,7 @@
 /*   By: ccrottie <ccrottie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:05 by ccrottie          #+#    #+#             */
-/*   Updated: 2024/01/31 14:28:14 by ccrottie         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:01:34 by ccrottie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,14 +108,17 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 				break ;
 		}
 	}
+	
 	if (flags.empty())
 		return ;
+		
+	int	opBot = 0;
+	
 	for (std::vector<std::string>::iterator flagsIt = flags.begin(); flagsIt != flags.end(); flagsIt++)
 	{
-		std::string									flagsItStr = *flagsIt;
+		std::string									flagsItStr;
 		std::string									strTarget;
 		Client										*target;
-		chanUser									*cu;
 		// for l
 		std::string									limitStr;
 		std::istringstream							limitIss;
@@ -124,6 +127,9 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 		std::map<std::string, chanUser>				clients;
 		std::map<std::string, chanUser>::iterator	clientsIt;
 		std::string									names;
+
+		flagsItStr = *flagsIt;
+		
 		switch (flagsItStr[1])
 		{
 			case 'i' :
@@ -146,12 +152,15 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 			case 'o' :
 				strTarget = flagsItStr;
 				strTarget.erase(0, 3);
-				if (strTarget == "bot")
-					break ;
 				target = server->getClientByNick(strTarget);
 				if (!target)
 				{
 					Server::sendToClient(client->fd, ERR_NOSUCHNICK(client->nick, strTarget));
+					break ;
+				}
+				if (strTarget == "bot")
+				{
+					opBot++;
 					break ;
 				}
 				cu = channel->getClientByNick(strTarget);
@@ -164,22 +173,6 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 					*cu->isOp = true;
 				else
 					*cu->isOp = false;
-				clients = channel->getClients();
-				for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
-				{
-					if (clientsIt != clients.begin())
-						names.append(" ");
-					if (*clientsIt->second.isOp)
-						names.append("@");
-					names.append(clientsIt->first);
-				}
-				for (clientsIt = clients.begin(); clientsIt != clients.end(); clientsIt++)
-				{
-					Server::sendToClient(clientsIt->second.client->fd, \
-						RPL_NAMREPLY(clientsIt->second.client->nick, "=", channel->getName(), names));
-					Server::sendToClient(clientsIt->second.client->fd, \
-						RPL_ENDOFNAMES(clientsIt->second.client->nick, channel->getName()));
-				}
 				break ;
 			case 'l' :
 				if (flagsItStr[0] == '+')
@@ -212,4 +205,6 @@ void	modeCmd(Client *client, const Command &command, Server *server)
 			modeReply.append(" ");
 	}
 	channel->sendToAll(RPL_CMD(client->nick, client->user, "MODE", modeReply));
+	if (opBot)
+		channel->sendToAll(RPL_CMD(client->nick, client->user, "MODE", channel->getName() + " -o bot"));
 }
